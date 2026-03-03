@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Контакты — запросы, офисы, обратная связь">
+  <title>Контакты — Shenzhen Hongyixin Technology Co., Ltd.</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar navbar-expand-lg navbar-light navbar-hyx">
+      <div class="container">
+        <a class="navbar-brand" href="../index.html"><img src="../../assets/logo.svg" alt="Hongyixin Tech" onerror="this.style.display='none'"><span>Hongyixin Tech</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarMain">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" href="../index.html">Главная</a></li>
+            <li class="nav-item"><a class="nav-link" href="../products/index.html">Продукция</a></li>
+            <li class="nav-item"><a class="nav-link" href="../about/index.html">О нас</a></li>
+            <li class="nav-item"><a class="nav-link" href="../news/index.html">Новости</a></li>
+            <li class="nav-item"><a class="nav-link" href="../join/index.html">Карьера</a></li>
+            <li class="nav-item"><a class="nav-link active" href="index.html">Контакты</a></li>
+          </ul>
+          <div class="d-flex align-items-center"><div class="lang-switcher"><a href="../../index.html" data-lang="zh">中文</a><a href="../../en/contact/index.html" data-lang="en">EN</a><a href="../index.html" data-lang="ru" class="active">RU</a></div><form class="d-flex search-box-header" id="header-search-form"><input class="form-control" type="search" placeholder="Поиск"><button class="btn btn-primary ms-1 rounded-circle" type="submit" style="width:38px;height:38px;padding:0">🔍</button></form></div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <div class="page-hero">
+    <div class="container">
+      <ol class="breadcrumb"><li class="breadcrumb-item"><a href="../index.html">Главная</a></li><li class="breadcrumb-item active">Контакты</li></ol>
+      <h1>Контакты</h1>
+      <p class="mb-0 opacity-90">Запросы, офисы, обратная связь</p>
+    </div>
+  </div>
+  <main class="py-5">
+    <div class="container">
+      <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-3"><div class="contact-card"><div class="icon-wrap mb-3">📞</div><h6 class="fw-bold">Общая линия</h6><p class="mb-0 text-muted small">400-XXX-XXXX</p></div></div>
+        <div class="col-md-6 col-lg-3"><div class="contact-card"><div class="icon-wrap mb-3">✉️</div><h6 class="fw-bold">Продажи</h6><p class="mb-0 text-muted small">sales@hongyixin.com</p></div></div>
+        <div class="col-md-6 col-lg-3"><div class="contact-card"><div class="icon-wrap mb-3">📧</div><h6 class="fw-bold">Инвесторам</h6><p class="mb-0 text-muted small">ir@hongyixin.com</p></div></div>
+        <div class="col-md-6 col-lg-3"><div class="contact-card"><div class="icon-wrap mb-3">📍</div><h6 class="fw-bold">Адрес</h6><p class="mb-0 text-muted small">Наньшань, Шэньчжэнь</p></div></div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 mb-4">
+          <h2 class="h5 fw-bold mb-3">Офисы</h2>
+          <ul class="list-unstyled">
+            <li class="mb-2"><strong>Штаб-квартира в Шэньчжэне</strong><br><span class="text-muted small">Наньшань, Шэньчжэнь</span></li>
+            <li class="mb-2"><strong>Офис в Шанхае</strong><br><span class="text-muted small">Пудун, Шанхай</span></li>
+          </ul>
+        </div>
+        <div class="col-lg-6">
+          <h2 class="h5 fw-bold mb-3">Обратная связь</h2>
+          <form id="feedback-form">
+            <div class="mb-3"><label for="name" class="form-label">Имя <span class="text-danger">*</span></label><input type="text" class="form-control" id="name" required placeholder="Ваше имя"></div>
+            <div class="mb-3"><label for="email" class="form-label">Email <span class="text-danger">*</span></label><input type="email" class="form-control" id="email" required placeholder="your@email.com"></div>
+            <div class="mb-3"><label for="subject" class="form-label">Тема</label><select class="form-select" id="subject"><option value="business">Деловой запрос</option><option value="product">Запрос КП</option><option value="feedback">Обратная связь</option><option value="other">Другое</option></select></div>
+            <div class="mb-3"><label for="message" class="form-label">Сообщение <span class="text-danger">*</span></label><textarea class="form-control" id="message" rows="4" required placeholder="Текст сообщения"></textarea></div>
+            <button type="submit" class="btn btn-hyx-primary">Отправить</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 mb-4 mb-lg-0"><div class="footer-title">Shenzhen Hongyixin Technology Co., Ltd.</div><p class="mb-2">Авторизованный дистрибьютор.</p><div class="social-links"><a href="#">📱</a><a href="#">in</a></div></div>
+        <div class="col-lg-2 col-6"><div class="footer-title">Ссылки</div><ul class="list-unstyled"><li><a href="../products/index.html">Продукция</a></li><li><a href="../about/index.html">О нас</a></li><li><a href="../news/index.html">Новости</a></li><li><a href="index.html">Контакты</a></li></ul></div>
+        <div class="col-lg-3 col-6"><div class="footer-title">Контакты</div><p class="mb-1">Тел.: 400-XXX-XXXX</p><p class="mb-1">Email: info@hongyixin.com</p></div>
+        <div class="col-lg-3"><div class="footer-title">Правовая информация</div><ul class="list-unstyled"><li><a href="#">Конфиденциальность</a></li><li><a href="#">Условия</a></li></ul></div>
+      </div>
+      <div class="footer-bottom text-center">© 2025 Shenzhen Hongyixin Technology Co., Ltd.</div>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/main.js"></script>
+  <script>document.getElementById('feedback-form').addEventListener('submit',function(e){e.preventDefault();alert('Спасибо за обратную связь! Мы свяжемся с вами в ближайшее время.');});</script>
+</body>
+</html>

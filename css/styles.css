@@ -1,0 +1,570 @@
+/* ============================================
+   深圳市弘易芯科技有限公司 - 官网样式
+   主色调：科技蓝 + 深灰，专业商务风
+   ============================================ */
+
+:root {
+  --primary: #0a4d8c;
+  --primary-dark: #073a6b;
+  --primary-light: #1a6bb8;
+  --accent: #00a0e9;
+  --gray-900: #1a1d21;
+  --gray-800: #2d3238;
+  --gray-700: #4a5058;
+  --gray-500: #6b7280;
+  --gray-300: #d1d5db;
+  --gray-100: #f3f4f6;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.12);
+  --transition: 0.25s ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  color: var(--gray-800);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--primary-light);
+}
+
+/* ========== 顶部导航 ========== */
+.site-header {
+  background: var(--white);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.navbar-hyx {
+  padding: 0.5rem 0;
+}
+
+.navbar-hyx .navbar-brand {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--primary) !important;
+}
+
+.navbar-hyx .navbar-brand img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.navbar-hyx .nav-link {
+  color: var(--gray-800) !important;
+  font-weight: 500;
+  padding: 0.6rem 1rem !important;
+  border-radius: 6px;
+}
+
+.navbar-hyx .nav-link:hover,
+.navbar-hyx .nav-link.active {
+  color: var(--primary) !important;
+  background: rgba(10, 77, 140, 0.06);
+}
+
+.navbar-hyx .dropdown-menu {
+  border: none;
+  box-shadow: var(--shadow-hover);
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  min-width: 200px;
+}
+
+.navbar-hyx .dropdown-item {
+  padding: 0.5rem 1.25rem;
+  color: var(--gray-800);
+}
+
+.navbar-hyx .dropdown-item:hover {
+  background: var(--gray-100);
+  color: var(--primary);
+}
+
+/* 语言切换 */
+.lang-switcher {
+  display: flex;
+  gap: 4px;
+  margin-right: 1rem;
+}
+
+.lang-switcher a {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  border-radius: 4px;
+}
+
+.lang-switcher a:hover,
+.lang-switcher a.active {
+  color: var(--primary);
+  background: var(--gray-100);
+}
+
+/* 搜索框 */
+.search-box-header {
+  max-width: 200px;
+}
+
+.search-box-header .form-control {
+  border-radius: 20px;
+  border: 1px solid var(--gray-300);
+  font-size: 0.9rem;
+}
+
+.search-box-header .form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(10, 77, 140, 0.15);
+}
+
+/* ========== Banner 轮播 ========== */
+.banner-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-section .carousel-item {
+  height: 420px;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+}
+
+.banner-section .carousel-item .container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.banner-section .carousel-caption {
+  position: relative;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2rem 0;
+  text-align: left;
+  color: var(--white);
+}
+
+.banner-section .carousel-caption h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.banner-section .carousel-caption p {
+  font-size: 1.1rem;
+  opacity: 0.95;
+  max-width: 560px;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 50px;
+  opacity: 0.9;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  opacity: 1;
+}
+
+/* ========== 快捷入口 ========== */
+.quick-entry {
+  margin-top: -40px;
+  position: relative;
+  z-index: 10;
+}
+
+.quick-entry .card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  transition: transform var(--transition), box-shadow var(--transition);
+  height: 100%;
+  overflow: hidden;
+}
+
+.quick-entry .card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
+.quick-entry .card-body {
+  padding: 1.75rem;
+}
+
+.quick-entry .card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.quick-entry .card-title {
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 0.5rem;
+}
+
+.quick-entry .card-text {
+  color: var(--gray-500);
+  font-size: 0.9rem;
+}
+
+/* ========== 通用区块标题 ========== */
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  color: var(--gray-500);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 2px;
+  margin-top: 0.75rem;
+}
+
+/* ========== 公司简介模块 ========== */
+.intro-section {
+  padding: 4rem 0;
+  background: var(--gray-100);
+}
+
+.intro-section .intro-text {
+  font-size: 1.05rem;
+  color: var(--gray-700);
+  line-height: 1.8;
+}
+
+.btn-hyx-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  border: none;
+  color: var(--white);
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.btn-hyx-primary:hover {
+  color: var(--white);
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.btn-hyx-outline {
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  background: transparent;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all var(--transition);
+}
+
+.btn-hyx-outline:hover {
+  background: var(--primary);
+  color: var(--white);
+}
+
+/* ========== 新闻动态 ========== */
+.news-card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  transition: box-shadow var(--transition);
+  height: 100%;
+}
+
+.news-card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.news-card .card-img-top {
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+.news-card .card-body {
+  padding: 1.25rem;
+}
+
+.news-card .news-date {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  margin-bottom: 0.5rem;
+}
+
+.news-card .card-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ========== 产品中心 ========== */
+.product-sidebar {
+  background: var(--white);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+  position: sticky;
+  top: 100px;
+}
+
+.product-sidebar .list-group-item {
+  border: none;
+  border-left: 3px solid transparent;
+  padding: 0.6rem 1rem;
+  color: var(--gray-700);
+  transition: all var(--transition);
+}
+
+.product-sidebar .list-group-item:hover,
+.product-sidebar .list-group-item.active {
+  background: var(--gray-100);
+  color: var(--primary);
+  border-left-color: var(--primary);
+}
+
+.product-card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  transition: transform var(--transition), box-shadow var(--transition);
+  height: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.product-card .card-img-top {
+  height: 200px;
+  object-fit: contain;
+  padding: 1rem;
+  background: var(--gray-100);
+}
+
+.product-card .card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+/* ========== 关于我们 / 内页 ========== */
+.page-hero {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  color: var(--white);
+  padding: 3rem 0;
+  margin-bottom: 2rem;
+}
+
+.page-hero h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.page-hero .breadcrumb {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.page-hero .breadcrumb-item a {
+  color: rgba(255,255,255,0.9);
+}
+
+.page-hero .breadcrumb-item.active {
+  color: rgba(255,255,255,0.7);
+}
+
+.content-section img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+/* ========== 联系我们 ========== */
+.contact-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.contact-card .icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: rgba(10, 77, 140, 0.1);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(10, 77, 140, 0.15);
+}
+
+/* ========== 页脚 ========== */
+.site-footer {
+  background: var(--gray-900);
+  color: rgba(255,255,255,0.85);
+  padding: 3rem 0 1.5rem;
+  margin-top: 4rem;
+}
+
+.site-footer a {
+  color: rgba(255,255,255,0.8);
+}
+
+.site-footer a:hover {
+  color: var(--accent);
+}
+
+.site-footer .footer-title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--white);
+}
+
+.site-footer .social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  margin-right: 0.5rem;
+  transition: background var(--transition);
+}
+
+.site-footer .social-links a:hover {
+  background: var(--primary);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.6);
+}
+
+/* ========== 招聘列表 ========== */
+.job-item {
+  border: 1px solid var(--gray-300);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.job-item:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow);
+}
+
+.job-item .job-title {
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 0.25rem;
+}
+
+.job-item .job-meta {
+  font-size: 0.9rem;
+  color: var(--gray-500);
+}
+
+/* ========== 工具类 ========== */
+.bg-light-gray {
+  background: var(--gray-100);
+}
+
+.rounded-10 {
+  border-radius: 10px;
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 991.98px) {
+  .banner-section .carousel-item {
+    height: 320px;
+  }
+
+  .banner-section .carousel-caption h2 {
+    font-size: 1.5rem;
+  }
+
+  .product-sidebar {
+    position: static;
+    margin-bottom: 1.5rem;
+  }
+
+  .navbar-hyx .dropdown-menu {
+    margin-top: 0.25rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .banner-section .carousel-item {
+    height: 280px;
+  }
+
+  .quick-entry .card-body {
+    padding: 1.25rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+}
