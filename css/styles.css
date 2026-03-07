@@ -98,35 +98,42 @@ a:hover {
   color: var(--primary);
 }
 
-/* 语言切换 */
-.lang-switcher {
-  display: flex;
-  gap: 4px;
-  margin-right: 1rem;
+/* 语言下拉框 */
+.lang-dropdown .btn {
+  font-size: 0.9rem;
+  padding: 0.35rem 0.75rem;
+  border-color: var(--gray-300);
+  color: var(--gray-700);
 }
 
-.lang-switcher a {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.85rem;
-  color: var(--gray-500);
-  border-radius: 4px;
-}
-
-.lang-switcher a:hover,
-.lang-switcher a.active {
+.lang-dropdown .btn:hover,
+.lang-dropdown .btn:focus {
+  border-color: var(--primary);
   color: var(--primary);
-  background: var(--gray-100);
+}
+
+.lang-dropdown .dropdown-menu {
+  min-width: 100px;
+  border: none;
+  box-shadow: var(--shadow-hover);
+}
+
+.lang-dropdown .dropdown-item.active {
+  background: var(--primary);
+  color: var(--white);
 }
 
 /* 搜索框 */
 .search-box-header {
-  max-width: 200px;
+  max-width: 300px;
 }
 
 .search-box-header .form-control {
   border-radius: 20px;
   border: 1px solid var(--gray-300);
   font-size: 0.9rem;
+  min-width: 250px;
+  width: 100%;
 }
 
 .search-box-header .form-control:focus {
@@ -498,7 +505,15 @@ a:hover {
   padding-top: 1.5rem;
   margin-top: 2rem;
   font-size: 0.9rem;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.75);
+}
+
+.site-footer .footer-bottom a {
+  color: rgba(255,255,255,0.85);
+}
+
+.site-footer .footer-bottom a:hover {
+  color: var(--accent);
 }
 
 /* ========== 招聘列表 ========== */

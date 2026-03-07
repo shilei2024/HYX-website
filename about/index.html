@@ -3,72 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="关于我们 - 深圳市弘易芯科技有限公司，公司介绍、发展历程、技术团队">
-  <title>关于我们 - 深圳市弘易芯科技有限公司</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <meta name="description" content="????? - ????????????????????">
+  <title>???? - ?????</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="../css/styles.css" rel="stylesheet">
 </head>
 <body>
-  <header class="site-header">
-    <nav class="navbar navbar-expand-lg navbar-light navbar-hyx">
-      <div class="container">
-        <a class="navbar-brand" href="../index.html"><img src="../assets/logo.svg" alt="弘易芯科技" onerror="this.style.display='none'"><span>弘易芯科技</span></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"><span class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navbarMain">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item"><a class="nav-link" href="../index.html">首页</a></li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="../products/index.html" data-bs-toggle="dropdown">产品中心</a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="../products/index.html?cat=passive">被动元器件</a></li>
-                <li><a class="dropdown-item" href="../products/index.html?cat=capacitor">电容</a></li>
-                <li><a class="dropdown-item" href="../products/index.html?cat=resistor">电阻</a></li>
-                <li><a class="dropdown-item" href="../products/index.html?cat=inductor">电感</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="../products/index.html?cat=active">主动元器件</a></li>
-                <li><a class="dropdown-item" href="../products/index.html?cat=ic">IC 芯片</a></li>
-              </ul>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle active" href="index.html" data-bs-toggle="dropdown">关于我们</a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="index.html">公司介绍</a></li>
-                <li><a class="dropdown-item" href="history.html">发展历程</a></li>
-                <li><a class="dropdown-item" href="team.html">技术团队</a></li>
-                <li><a class="dropdown-item" href="supply-chain.html">供应链优势</a></li>
-                <li><a class="dropdown-item" href="qualifications.html">资质荣誉</a></li>
-              </ul>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="../news/index.html" data-bs-toggle="dropdown">新闻中心</a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="../news/index.html">公司动态</a></li>
-                <li><a class="dropdown-item" href="../news/index.html?type=industry">行业新闻</a></li>
-                <li><a class="dropdown-item" href="../news/index.html?type=tech">技术文章</a></li>
-              </ul>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="../join/index.html">加入我们</a></li>
-            <li class="nav-item"><a class="nav-link" href="../contact/index.html">联系我们</a></li>
-          </ul>
-          <div class="d-flex align-items-center">
-            <div class="lang-switcher"><a href="../index.html" data-lang="zh" class="active">中文</a><a href="../en/index.html" data-lang="en">EN</a><a href="../ru/index.html" data-lang="ru">RU</a></div>
-            <form class="d-flex search-box-header" id="header-search-form"><input class="form-control" type="search" placeholder="搜索"><button class="btn btn-primary ms-1 rounded-circle" type="submit" style="width:38px;height:38px;padding:0">🔍</button></form>
-          </div>
-        </div>
-      </div>
-    </nav>
-  </header>
+  <header class="site-header" id="hyx-header"></header>
 
   <div class="page-hero">
     <div class="container">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="../index.html">首页</a></li>
-          <li class="breadcrumb-item active" aria-current="page">关于我们</li>
+          <li class="breadcrumb-item"><a href="../index.html" data-i18n="nav.home">??</a></li>
+          <li class="breadcrumb-item active" aria-current="page" data-i18n="nav.about">????</li>
         </ol>
       </nav>
-      <h1>关于我们</h1>
-      <p class="mb-0 opacity-90">公司介绍、发展历程、技术团队与资质荣誉</p>
+      <h1 data-i18n="nav.about">????</h1>
+      <p class="mb-0 opacity-90" data-i18n="home.aboutSubtitle">?????????????????</p>
     </div>
   </div>
 
@@ -77,63 +31,48 @@
       <div class="row">
         <div class="col-lg-3 mb-4">
           <div class="list-group">
-            <a href="index.html" class="list-group-item list-group-item-action active">公司介绍</a>
-            <a href="history.html" class="list-group-item list-group-item-action">发展历程</a>
-            <a href="team.html" class="list-group-item list-group-item-action">技术团队</a>
-            <a href="supply-chain.html" class="list-group-item list-group-item-action">供应链优势</a>
-            <a href="qualifications.html" class="list-group-item list-group-item-action">资质荣誉</a>
+            <a href="index.html" class="list-group-item list-group-item-action active" data-i18n="nav.dropdown.intro">????</a>
+            <a href="history.html" class="list-group-item list-group-item-action" data-i18n="nav.dropdown.history">????</a>
+            <a href="team.html" class="list-group-item list-group-item-action" data-i18n="nav.dropdown.team">????</a>
+            <a href="supply-chain.html" class="list-group-item list-group-item-action" data-i18n="nav.dropdown.supply">?????</a>
+            <a href="qualifications.html" class="list-group-item list-group-item-action" data-i18n="nav.dropdown.qual">????</a>
           </div>
         </div>
         <div class="col-lg-9">
-          <h2 class="h4 fw-bold mb-4">公司介绍</h2>
-          <p class="intro-text">
-            深圳市弘易芯科技有限公司是一家专注于电子元器件分销与技术方案支持的授权代理商。公司立足深圳，服务全国及海外客户，致力于为电子制造企业、研发机构提供高品质的被动元器件与主动元器件供应，以及从选型、试样到量产的一站式服务。
+          <h2 class="h4 fw-bold mb-4" data-i18n="about.heading">????</h2>
+          <p class="intro-text" data-i18n="about.intro1">
+            ?????????????????????????????????????????????????????????????????????????????????????????????????????????????
           </p>
-          <p class="intro-text">
-            我们与多家国际知名原厂保持长期授权合作，产品线覆盖电容、电阻、电感、IC、二三极管、连接器等全品类。公司拥有专业的技术团队与完善的供应链体系，能够快速响应客户需求，保障交期与品质，助力客户产品创新与市场竞争力提升。
+          <p class="intro-text" data-i18n="about.intro2">
+            ?????????????????? FAE ??????????????????"?????????"?????????????????????
           </p>
           <div class="row g-4 my-4">
             <div class="col-md-6">
               <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                  <h5 class="card-title text-primary">我们的使命</h5>
-                  <p class="card-text text-muted mb-0">以专业与诚信，为客户提供可靠的元器件供应与技术支持，成为客户值得信赖的合作伙伴。</p>
+                  <h5 class="card-title text-primary" data-i18n="about.card1Title">????</h5>
+                  <p class="card-text text-muted mb-0" data-i18n="about.card1Text">?????????????????????</p>
                 </div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                  <h5 class="card-title text-primary">我们的愿景</h5>
-                  <p class="card-text text-muted mb-0">成为电子元器件分销与方案服务领域的领先企业，持续创造价值，与客户共同成长。</p>
+                  <h5 class="card-title text-primary" data-i18n="about.card2Title">????</h5>
+                  <p class="card-text text-muted mb-0" data-i18n="about.card2Text">???????FAE ?????????</p>
                 </div>
               </div>
             </div>
           </div>
-          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80" alt="公司环境" class="img-fluid rounded-10 shadow mt-3">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80" alt="?????" class="img-fluid rounded-10 shadow mt-3">
         </div>
       </div>
     </div>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-4 mb-4 mb-lg-0">
-          <div class="footer-title">深圳市弘易芯科技有限公司</div>
-          <p class="mb-2">专业电子元器件授权代理商。</p>
-          <div class="social-links"><a href="#">📱</a><a href="#">in</a></div>
-        </div>
-        <div class="col-lg-2 col-6"><div class="footer-title">快速链接</div>
-          <ul class="list-unstyled"><li><a href="../products/index.html">产品中心</a></li><li><a href="../about/index.html">关于我们</a></li><li><a href="../news/index.html">新闻中心</a></li><li><a href="../contact/index.html">联系我们</a></li></ul>
-        </div>
-        <div class="col-lg-3 col-6"><div class="footer-title">联系方式</div><p class="mb-1">总机：400-XXX-XXXX</p><p class="mb-1">邮箱：info@hongyixin.com</p></div>
-        <div class="col-lg-3"><div class="footer-title">法律条款</div><ul class="list-unstyled"><li><a href="#">隐私政策</a></li><li><a href="#">使用条款</a></li></ul></div>
-      </div>
-      <div class="footer-bottom text-center">© 2025 深圳市弘易芯科技有限公司 版权所有</div>
-    </div>
-  </footer>
+  <footer class="site-footer" id="hyx-footer"></footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../js/main.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/data-loader.js"></script>
 </body>
 </html>

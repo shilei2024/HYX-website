@@ -1,0 +1,96 @@
+{
+  "nav": {
+    "home": "首页",
+    "products": "产品中心",
+    "about": "关于我们",
+    "news": "新闻中心",
+    "contact": "联系我们",
+    "dropdown": {
+      "passive": "被动元器件",
+      "capacitor": "电容",
+      "resistor": "电阻",
+      "inductor": "电感",
+      "active": "主动元器件",
+      "ic": "IC 芯片",
+      "intro": "公司介绍",
+      "history": "发展历程",
+      "team": "技术团队",
+      "supply": "供应链优势",
+      "qual": "资质荣誉",
+      "company": "公司动态",
+      "industry": "行业新闻",
+      "tech": "技术文章"
+    }
+  },
+  "products": {
+    "title": "产品中心",
+    "subtitle": "被动元器件、主动元器件，电容电阻电感IC",
+    "categories": "产品分类",
+    "inquiry": "询价",
+    "download": "数据手册下载"
+  },
+  "news": {
+    "title": "新闻中心",
+    "subtitle": "公司动态、行业新闻、技术文章",
+    "all": "全部",
+    "company": "公司动态",
+    "industry": "行业新闻",
+    "tech": "技术文章",
+    "readMore": "更多新闻"
+  },
+  "contact": {
+    "title": "联系我们",
+    "subtitle": "业务咨询、全球据点、意见反馈",
+    "phone": "联系电话",
+    "email": "业务咨询",
+    "irEmail": "投资者咨询",
+    "address": "公司地址",
+    "locations": "全球据点",
+    "feedback": "意见反馈",
+    "name": "姓名",
+    "namePlaceholder": "您的姓名",
+    "emailLabel": "邮箱",
+    "emailPlaceholder": "your@email.com",
+    "subject": "主题",
+    "subjectBusiness": "业务咨询",
+    "subjectProduct": "产品询价",
+    "subjectFeedback": "意见反馈",
+    "subjectOther": "其他",
+    "message": "留言",
+    "messagePlaceholder": "请填写您的留言内容",
+    "submit": "提交"
+  },
+  "footer": {
+    "quickLinks": "快速链接",
+    "contact": "联系方式",
+    "legal": "法律条款",
+    "privacy": "隐私政策",
+    "terms": "使用条款"
+  },
+  "home": {
+    "banner1Title": "授权代理 · 品质保障",
+    "banner1Desc": "弘易芯科技专注电子元器件分销与方案支持，携手国际一线品牌，为制造企业提供稳定可靠的供应链服务。",
+    "banner2Title": "被动 / 主动元器件全覆盖",
+    "banner2Desc": "电容、电阻、电感、IC等全品类供应，满足研发与量产需求，助力客户产品快速上市。",
+    "banner3Title": "技术赋能 · 方案中心",
+    "banner3Desc": "专业FAE团队提供选型、调试与量产支持，从概念到量产全程护航。",
+    "authorizedAgent": "授权代理",
+    "authorizedAgentDesc": "品牌授权与正品保障，合作厂商与资质一览",
+    "productCenter": "产品中心",
+    "productCenterDesc": "被动/主动元器件分类浏览与询价",
+    "solutionCenter": "方案中心",
+    "solutionCenterDesc": "技术方案与FAE支持，助力产品落地",
+    "contactUs": "联系我们",
+    "contactUsDesc": "业务咨询、全球据点与意见反馈",
+    "aboutTitle": "关于弘易芯科技",
+    "aboutSubtitle": "专业、可信赖的电子元器件授权代理商",
+    "aboutText": "深圳市弘易芯科技有限公司致力于为电子制造企业提供优质的元器件供应与技术支持。我们拥有完善的授权体系与供应链能力，覆盖被动元器件与主动元器件全品类，携手国际知名品牌，为客户提供从选型、小批量试产到大批量供货的一站式服务。公司注重技术投入与客户体验，以"专业、高效、可信赖"为理念，助力客户产品创新与市场竞争力提升。",
+    "learnMore": "了解更多",
+    "newsTitle": "新闻动态",
+    "newsSubtitle": "了解公司最新动态与行业资讯"
+  },
+  "common": {
+    "search": "搜索产品/新闻",
+    "required": "必填"
+  }
+}

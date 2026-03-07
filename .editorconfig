@@ -1,0 +1,10 @@
+# 确保中文等字符正确保存，避免乱码
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+[*.{html,json,js,css,md}]
+charset = utf-8

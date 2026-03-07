@@ -1,0 +1,96 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "about": "About Us",
+    "news": "News",
+    "contact": "Contact",
+    "dropdown": {
+      "passive": "Passive Components",
+      "capacitor": "Capacitors",
+      "resistor": "Resistors",
+      "inductor": "Inductors",
+      "active": "Active Components",
+      "ic": "IC Chips",
+      "intro": "Company Overview",
+      "history": "History",
+      "team": "Team",
+      "supply": "Supply Chain",
+      "qual": "Qualifications",
+      "company": "Company News",
+      "industry": "Industry News",
+      "tech": "Tech Articles"
+    }
+  },
+  "products": {
+    "title": "Products",
+    "subtitle": "Passive and Active Components, Capacitors, Resistors, Inductors, ICs",
+    "categories": "Categories",
+    "inquiry": "Inquiry",
+    "download": "Download Datasheet"
+  },
+  "news": {
+    "title": "News",
+    "subtitle": "Company News, Industry Updates, Technical Articles",
+    "all": "All",
+    "company": "Company News",
+    "industry": "Industry News",
+    "tech": "Technical Articles",
+    "readMore": "More News"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Business Inquiries, Global Locations, Feedback",
+    "phone": "Phone",
+    "email": "Sales Inquiry",
+    "irEmail": "Investor Relations",
+    "address": "Address",
+    "locations": "Global Locations",
+    "feedback": "Feedback",
+    "name": "Name",
+    "namePlaceholder": "Your Name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "subject": "Subject",
+    "subjectBusiness": "Business Inquiry",
+    "subjectProduct": "Product Inquiry",
+    "subjectFeedback": "Feedback",
+    "subjectOther": "Other",
+    "message": "Message",
+    "messagePlaceholder": "Please enter your message",
+    "submit": "Submit"
+  },
+  "footer": {
+    "quickLinks": "Quick Links",
+    "contact": "Contact",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use"
+  },
+  "home": {
+    "banner1Title": "Authorized Distribution · Quality Assurance",
+    "banner1Desc": "HYIC specializes in electronic component distribution and solution support, partnering with top international brands to provide stable and reliable supply chain services for manufacturers.",
+    "banner2Title": "Complete Coverage of Passive & Active Components",
+    "banner2Desc": "Full range of capacitors, resistors, inductors, ICs and more, meeting R&D and mass production needs, helping customers bring products to market quickly.",
+    "banner3Title": "Technical Empowerment · Solution Center",
+    "banner3Desc": "Professional FAE team provides selection, debugging, and mass production support, escorting from concept to mass production.",
+    "authorizedAgent": "Authorized Agent",
+    "authorizedAgentDesc": "Brand authorization and genuine product guarantee",
+    "productCenter": "Products",
+    "productCenterDesc": "Browse and inquire about passive/active components",
+    "solutionCenter": "Solutions",
+    "solutionCenterDesc": "Technical solutions and FAE support",
+    "contactUs": "Contact Us",
+    "contactUsDesc": "Business inquiries, global locations and feedback",
+    "aboutTitle": "About HYIC",
+    "aboutSubtitle": "Professional and Trusted Electronic Component Authorized Distributor",
+    "aboutText": "Shenzhen HYIC Technology Co., Ltd. is dedicated to providing quality component supply and technical support for electronics manufacturers. We have a comprehensive authorization system and supply chain capability, covering passive and active components across all categories, partnering with internationally renowned brands to provide one-stop services from selection, small batch trial production to large volume supply. The company focuses on technology investment and customer experience, with the philosophy of 'Professional, Efficient, Trusted', helping customers innovate products and enhance market competitiveness.",
+    "learnMore": "Learn More",
+    "newsTitle": "Latest News",
+    "newsSubtitle": "Stay updated with company news and industry insights"
+  },
+  "common": {
+    "search": "Search products/news",
+    "required": "Required"
+  }
+}

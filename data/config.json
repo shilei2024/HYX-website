@@ -1,0 +1,51 @@
+{
+  "site": {
+    "name": "深圳市弘易芯科技有限公司",
+    "nameEn": "HYIC Technology Co., Ltd.",
+    "nameShort": "弘易芯科技",
+    "description": "专业电子元器件授权代理商，被动/主动元器件供应链与方案服务",
+    "logo": "assets/logo.png"
+  },
+  "contact": {
+    "phone": "13823674897",
+    "phoneDisplay": "138 2367 4897",
+    "email": "bill.zhang@hyic-tech.cn",
+    "salesEmail": "bill.zhang@hyic-tech.cn",
+    "irEmail": "bill.zhang@hyic-tech.cn",
+    "contactPerson": "张先生",
+    "weChat": "",
+    "address": "深圳市南山区",
+    "addressFull": "深圳市南山区科技园",
+    "officeHours": "周一至周五 9:00-18:00"
+  },
+  "social": {
+    "weChat": "",
+    "linkedIn": "",
+    "weibo": ""
+  },
+  "locations": [
+    {
+      "name": "深圳总部",
+      "nameEn": "Shenzhen HQ",
+      "address": "深圳市南山区科技园",
+      "phone": "13823674897",
+      "email": "bill.zhang@hyic-tech.cn"
+    },
+    {
+      "name": "上海办事处",
+      "nameEn": "Shanghai Office",
+      "address": "上海市浦东新区",
+      "phone": "",
+      "email": ""
+    }
+  ],
+  "footer": {
+    "copyright": "© 2025 深圳市弘易芯科技有限公司 版权所有",
+    "icp": "粤ICP备*********号",
+    "icpUrl": "https://beian.miit.gov.cn/",
+    "policeBeiAn": "粤公安备**********号",
+    "policeUrl": "https://beian.mps.gov.cn/",
+    "privacyUrl": "#",
+    "termsUrl": "#"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "categories": [
+    { "id": "passive", "name": "被动元器件", "nameEn": "Passive Components" },
+    { "id": "capacitor", "name": "电容", "nameEn": "Capacitors", "parent": "passive" },
+    { "id": "resistor", "name": "电阻", "nameEn": "Resistors", "parent": "passive" },
+    { "id": "inductor", "name": "电感", "nameEn": "Inductors", "parent": "passive" },
+    { "id": "active", "name": "主动元器件", "nameEn": "Active Components" },
+    { "id": "ic", "name": "IC芯片", "nameEn": "IC Chips", "parent": "active" },
+    { "id": "diode", "name": "二三极管", "nameEn": "Diodes & Transistors", "parent": "active" },
+    { "id": "connector", "name": "连接器", "nameEn": "Connectors" }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "MLCC 片式多层陶瓷电容",
+      "nameEn": "MLCC Multilayer Ceramic Capacitors",
+      "category": "capacitor",
+      "description": "高容量、高耐压，适用于消费电子与工业",
+      "descriptionEn": "High capacitance, high voltage, suitable for consumer electronics and industrial applications",
+      "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80",
+      "features": ["高容量", "高耐压", "小型化", "可靠性高"],
+      "specs": {}
+    },
+    {
+      "id": 2,
+      "name": "贴片电阻",
+      "nameEn": "SMD Resistors",
+      "category": "resistor",
+      "description": "高精度、低温漂，多种封装",
+      "descriptionEn": "High precision, low temperature coefficient, various packages",
+      "image": "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=400&q=80",
+      "features": ["高精度", "低温漂", "多种封装"],
+      "specs": {}
+    },
+    {
+      "id": 3,
+      "name": "功率电感",
+      "nameEn": "Power Inductors",
+      "category": "inductor",
+      "description": "大电流、低损耗，电源与DC-DC应用",
+      "descriptionEn": "High current, low loss, for power supply and DC-DC applications",
+      "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80",
+      "features": ["大电流", "低损耗", "高效率"],
+      "specs": {}
+    },
+    {
+      "id": 4,
+      "name": "电源管理IC",
+      "nameEn": "Power Management IC",
+      "category": "ic",
+      "description": "LDO、DCDC、PMIC等",
+      "descriptionEn": "LDO, DCDC, PMIC, etc.",
+      "image": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&q=80",
+      "features": ["高效率", "低功耗", "集成度高"],
+      "specs": {}
+    },
+    {
+      "id": 5,
+      "name": "二三极管",
+      "nameEn": "Diodes & Transistors",
+      "category": "diode",
+      "description": "整流、开关、保护等应用",
+      "descriptionEn": "Rectification, switching, protection applications",
+      "image": "https://images.unsplash.com/photo-1633419461181-25132a255f3e?w=400&q=80",
+      "features": ["快恢复", "低导通电阻", "高可靠性"],
+      "specs": {}
+    },
+    {
+      "id": 6,
+      "name": "连接器",
+      "nameEn": "Connectors",
+      "category": "connector",
+      "description": "板对板、线对板、FPC等",
+      "descriptionEn": "Board-to-board, wire-to-board, FPC, etc.",
+      "image": "https://images.unsplash.com/photo-1624823183493-1e403a661260?w=400&q=80",
+      "features": ["高密度", "高可靠性", "多种规格"],
+      "specs": {}
+    }
+  ]
+}

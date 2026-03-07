@@ -3,71 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="News - Company updates, industry news, technical articles">
-  <title>News - Shenzhen Hongyixin Technology Co., Ltd.</title>
+  <link rel="icon" href="../../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../../assets/logo.png">
+  <meta name="description" content="News - Company News, Industry Updates, Technical Articles">
+  <title>News - HYIC Technology Co., Ltd.</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="../../css/styles.css" rel="stylesheet">
 </head>
 <body>
-  <header class="site-header">
-    <nav class="navbar navbar-expand-lg navbar-light navbar-hyx">
-      <div class="container">
-        <a class="navbar-brand" href="../index.html"><img src="../../assets/logo.svg" alt="Hongyixin Tech" onerror="this.style.display='none'"><span>Hongyixin Tech</span></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"><span class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navbarMain">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
-            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="../products/index.html" data-bs-toggle="dropdown">Products</a><ul class="dropdown-menu"><li><a class="dropdown-item" href="../products/index.html">Products</a></li></ul></li>
-            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="../about/index.html" data-bs-toggle="dropdown">About Us</a><ul class="dropdown-menu"><li><a class="dropdown-item" href="../about/index.html">About Us</a></li></ul></li>
-            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle active" href="index.html" data-bs-toggle="dropdown">News</a>
-              <ul class="dropdown-menu"><li><a class="dropdown-item" href="index.html">Company News</a></li><li><a class="dropdown-item" href="index.html?type=industry">Industry News</a></li><li><a class="dropdown-item" href="index.html?type=tech">Technical Articles</a></li></ul>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="../join/index.html">Careers</a></li>
-            <li class="nav-item"><a class="nav-link" href="../contact/index.html">Contact</a></li>
-          </ul>
-          <div class="d-flex align-items-center"><div class="lang-switcher"><a href="../../index.html" data-lang="zh">中文</a><a href="../index.html" data-lang="en" class="active">EN</a><a href="../../ru/news/index.html" data-lang="ru">RU</a></div><form class="d-flex search-box-header" id="header-search-form"><input class="form-control" type="search" placeholder="Search"><button class="btn btn-primary ms-1 rounded-circle" type="submit" style="width:38px;height:38px;padding:0">🔍</button></form></div>
-        </div>
-      </div>
-    </nav>
-  </header>
+  <header class="site-header" id="hyx-header"></header>
+
   <div class="page-hero">
     <div class="container">
-      <ol class="breadcrumb"><li class="breadcrumb-item"><a href="../index.html">Home</a></li><li class="breadcrumb-item active">News</li></ol>
-      <h1>News</h1>
-      <p class="mb-0 opacity-90">Company news, industry updates, technical articles</p>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../../index.html">Home</a></li>
+        <li class="breadcrumb-item active" data-i18n="nav.news">News</li>
+      </ol>
+      <h1 data-i18n="news.title">News</h1>
+      <p class="mb-0 opacity-90" data-i18n="news.subtitle">Company News, Industry Updates, Technical Articles</p>
     </div>
   </div>
+
   <main class="py-5">
     <div class="container">
-      <ul class="nav nav-pills mb-4">
-        <li class="nav-item"><a class="nav-link active" href="index.html">All</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.html?type=company">Company News</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.html?type=industry">Industry News</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.html?type=tech">Technical Articles</a></li>
-      </ul>
-      <div class="row g-4">
-        <div class="col-md-6 col-lg-4"><a href="detail.html?id=1" class="text-decoration-none text-dark"><div class="card news-card"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&q=80" class="card-img-top" alt=""><div class="card-body"><div class="news-date">2025-02-28</div><h5 class="card-title">Hongyixin Deepens Strategic Partnership with International Brand</h5></div></div></a></div>
-        <div class="col-md-6 col-lg-4"><a href="detail.html?id=2" class="text-decoration-none text-dark"><div class="card news-card"><img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80" class="card-img-top" alt=""><div class="card-body"><div class="news-date">2025-02-20</div><h5 class="card-title">Exhibiting at 2025 Shenzhen Electronics Show with New Solutions</h5></div></div></a></div>
-        <div class="col-md-6 col-lg-4"><a href="detail.html?id=3" class="text-decoration-none text-dark"><div class="card news-card"><img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&q=80" class="card-img-top" alt=""><div class="card-body"><div class="news-date">2025-02-10</div><h5 class="card-title">Passive Components Seminar on Supply and Selection Concluded</h5></div></div></a></div>
-        <div class="col-md-6 col-lg-4"><a href="detail.html?id=4" class="text-decoration-none text-dark"><div class="card news-card"><img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80" class="card-img-top" alt=""><div class="card-body"><div class="news-date">2025-01-25</div><h5 class="card-title">Power Management IC Selection Guide and Applications</h5></div></div></a></div>
-        <div class="col-md-6 col-lg-4"><a href="detail.html?id=5" class="text-decoration-none text-dark"><div class="card news-card"><img src="https://images.unsplash.com/photo-1486312338215-ce68d2c6f44d?w=600&q=80" class="card-img-top" alt=""><div class="card-body"><div class="news-date">2025-01-15</div><h5 class="card-title">2024 Year in Review and 2025 Outlook</h5></div></div></a></div>
-        <div class="col-md-6 col-lg-4"><a href="detail.html?id=6" class="text-decoration-none text-dark"><div class="card news-card"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" class="card-img-top" alt=""><div class="card-body"><div class="news-date">2025-01-05</div><h5 class="card-title">New Office Opens, Expanding R&amp;D and Warehousing</h5></div></div></a></div>
-      </div>
-      <nav class="mt-4" aria-label="Pagination"><ul class="pagination justify-content-center"><li class="page-item disabled"><span class="page-link">Previous</span></li><li class="page-item active"><span class="page-link">1</span></li><li class="page-item"><a class="page-link" href="#">2</a></li><li class="page-item"><a class="page-link" href="#">Next</a></li></ul></nav>
+      <ul class="nav nav-pills mb-4" id="news-tabs"></ul>
+      <div id="news-list"></div>
     </div>
   </main>
-  <footer class="site-footer">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-4 mb-4 mb-lg-0"><div class="footer-title">Shenzhen Hongyixin Technology Co., Ltd.</div><p class="mb-2">Authorized distributor.</p><div class="social-links"><a href="#">📱</a><a href="#">in</a></div></div>
-        <div class="col-lg-2 col-6"><div class="footer-title">Quick Links</div><ul class="list-unstyled"><li><a href="../products/index.html">Products</a></li><li><a href="../about/index.html">About Us</a></li><li><a href="index.html">News</a></li><li><a href="../contact/index.html">Contact</a></li></ul></div>
-        <div class="col-lg-3 col-6"><div class="footer-title">Contact</div><p class="mb-1">Tel: 400-XXX-XXXX</p><p class="mb-1">Email: info@hongyixin.com</p></div>
-        <div class="col-lg-3"><div class="footer-title">Legal</div><ul class="list-unstyled"><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li></ul></div>
-      </div>
-      <div class="footer-bottom text-center">© 2025 Shenzhen Hongyixin Technology Co., Ltd.</div>
-    </div>
-  </footer>
+
+  <footer class="site-footer" id="hyx-footer"></footer>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../../js/main.js"></script>
+  <script src="../../js/components.js"></script>
+  <script src="../../js/data-loader.js"></script>
+  <script>
+    document.addEventListener('hyx-components-ready', async function() {
+      if (!window.HYXRenderer) return;
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentType = urlParams.get('type') || '';
+      
+      const newsData = await HYXRenderer.loadNews();
+      
+      const tabsContainer = document.getElementById('news-tabs');
+      if (tabsContainer) {
+        HYXRenderer.renderNewsTabs(tabsContainer, newsData.types, currentType);
+      }
+      
+      let news = newsData.news;
+      if (currentType) {
+        news = news.filter(n => n.type === currentType);
+      }
+      
+      const listContainer = document.getElementById('news-list');
+      if (listContainer) {
+        HYXRenderer.renderNewsCards(listContainer, news, '../../');
+      }
+    });
+  </script>
 </body>
 </html>
