@@ -5,25 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="../../assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="../../assets/logo.png">
-  <meta name="description" content="Products - Passive and Active Components, Capacitors, Resistors, Inductors, ICs">
-  <title>Products - HYIC Technology Co., Ltd.</title>
+  <meta name="description" content="Products - HYIC Technology">
+  <title>Product List - HYIC</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="../../css/styles.css" rel="stylesheet">
 </head>
 <body>
   <header class="site-header" id="hyx-header"></header>
 
+  <div class="page-hero" id="product-list-hero">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="../index.html" data-i18n="nav.home">Home</a></li>
+          <li class="breadcrumb-item"><a href="distribution.html" data-i18n="nav.products">Products</a></li>
+          <li class="breadcrumb-item"><a href="distribution.html" data-i18n="nav.dropdown.distribution">Distribution Brands</a></li>
+          <li class="breadcrumb-item active" aria-current="page" id="hero-cat-name">—</li>
+        </ol>
+      </nav>
+      <h1 id="hero-title" data-i18n="products.title">Product List</h1>
+      <p class="mb-0 opacity-90" id="hero-desc">—</p>
+    </div>
+  </div>
+
   <main class="py-5">
     <div class="container">
-      <div class="row">
-        <aside class="col-lg-3 mb-4 mb-lg-0">
-          <div class="product-sidebar" id="product-sidebar"></div>
-        </aside>
-        <div class="col-lg-9">
-          <h1 class="h4 mb-4 fw-bold" data-i18n="products.title">Products</h1>
-          <div id="product-list"></div>
-        </div>
-      </div>
+      <div id="product-list"></div>
     </div>
   </main>
 
@@ -34,27 +41,30 @@
   <script src="../../js/data-loader.js"></script>
   <script>
     document.addEventListener('hyx-components-ready', async function() {
+      var urlParams = new URLSearchParams(window.location.search);
+      var currentCat = urlParams.get('cat') || '';
+      if (!currentCat) {
+        window.location.replace('distribution.html');
+        return;
+      }
       if (!window.HYXRenderer) return;
-      
-      const urlParams = new URLSearchParams(window.location.search);
-      const currentCat = urlParams.get('cat') || '';
-      
-      const productData = await HYXRenderer.loadProducts();
-      
-      const sidebar = document.getElementById('product-sidebar');
-      if (sidebar) {
-        HYXRenderer.renderProductSidebar(sidebar, productData.categories, currentCat);
-      }
-      
-      let products = productData.products;
-      if (currentCat) {
-        products = products.filter(p => p.category === currentCat);
-      }
-      
-      const listContainer = document.getElementById('product-list');
-      if (listContainer) {
-        HYXRenderer.renderProductCards(listContainer, products, '../../');
-      }
+      var productData = await HYXRenderer.loadProducts();
+      var cat = (productData.categories || []).find(function(c) { return c.id === currentCat; });
+      var lang = window.HYXData && window.HYXData.lang ? window.HYXData.lang : 'zh';
+      var nameKey = lang === 'zh' ? 'name' : 'nameEn';
+      var descKey = lang === 'zh' ? 'description' : 'descriptionEn';
+      var catName = cat ? (cat[nameKey] || cat.name) : currentCat;
+      var catDesc = cat ? (cat[descKey] || cat.description || '') : '';
+      var heroTitle = document.getElementById('hero-title');
+      var heroCatName = document.getElementById('hero-cat-name');
+      var heroDesc = document.getElementById('hero-desc');
+      if (heroTitle) heroTitle.textContent = catName;
+      if (heroCatName) heroCatName.textContent = catName;
+      if (heroDesc) heroDesc.textContent = catDesc;
+
+      var products = (productData.products || []).filter(function(p) { return p.category === currentCat; });
+      var listContainer = document.getElementById('product-list');
+      if (listContainer) HYXRenderer.renderProductCards(listContainer, products, '../../');
     });
   </script>
 </body>

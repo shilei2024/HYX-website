@@ -1,13 +1,13 @@
 {
   "categories": [
-    { "id": "passive", "name": "被动元器件", "nameEn": "Passive Components" },
-    { "id": "capacitor", "name": "电容", "nameEn": "Capacitors", "parent": "passive" },
-    { "id": "resistor", "name": "电阻", "nameEn": "Resistors", "parent": "passive" },
-    { "id": "inductor", "name": "电感", "nameEn": "Inductors", "parent": "passive" },
-    { "id": "active", "name": "主动元器件", "nameEn": "Active Components" },
-    { "id": "ic", "name": "IC芯片", "nameEn": "IC Chips", "parent": "active" },
-    { "id": "diode", "name": "二三极管", "nameEn": "Diodes & Transistors", "parent": "active" },
-    { "id": "connector", "name": "连接器", "nameEn": "Connectors" }
+    { "id": "authorized", "name": "代理品牌", "nameEn": "Authorized Brands", "href": "brands.html" },
+    { "id": "distribution", "name": "分销品牌", "nameEn": "Distribution Brands" },
+    { "id": "capacitor", "name": "电容", "nameEn": "Capacitors", "parent": "distribution", "description": "MLCC、电解电容等，高容量高耐压，消费电子与工业应用", "descriptionEn": "MLCC, electrolytic capacitors, high capacitance and voltage" },
+    { "id": "resistor", "name": "电阻", "nameEn": "Resistors", "parent": "distribution", "description": "贴片电阻、精密电阻等，高精度低温漂，多种封装", "descriptionEn": "SMD resistors, precision resistors, various packages" },
+    { "id": "inductor", "name": "电感", "nameEn": "Inductors", "parent": "distribution", "description": "功率电感、叠层电感等，大电流低损耗，电源与DC-DC", "descriptionEn": "Power inductors, multilayer inductors, for power and DC-DC" },
+    { "id": "ic", "name": "IC芯片", "nameEn": "IC Chips", "parent": "distribution", "description": "电源管理IC、模拟IC等，满足各类方案需求", "descriptionEn": "Power management IC, analog IC, and more" },
+    { "id": "diode", "name": "二三极管", "nameEn": "Diodes & Transistors", "parent": "distribution", "description": "整流、开关、保护等，快恢复低导通电阻", "descriptionEn": "Rectification, switching, protection applications" },
+    { "id": "connector", "name": "连接器", "nameEn": "Connectors", "parent": "distribution", "description": "板对板、线对板、FPC等，高密度高可靠性", "descriptionEn": "Board-to-board, wire-to-board, FPC connectors" }
   ],
   "products": [
     {

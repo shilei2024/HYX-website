@@ -24,6 +24,30 @@
     }
   }
 
+  // 加载代理品牌数据
+  async function loadBrands() {
+    try {
+      const response = await fetch(getBasePath() + 'data/brands.json');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      console.error('Failed to load brands:', error);
+      return { brands: [] };
+    }
+  }
+
+  // 加载分销品牌数据
+  async function loadDistributionBrands() {
+    try {
+      const response = await fetch(getBasePath() + 'data/distribution-brands.json');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      console.error('Failed to load distribution brands:', error);
+      return { brands: [] };
+    }
+  }
+
   // 加载新闻数据
   async function loadNews() {
     try {
@@ -48,17 +72,74 @@
     return (window.HYXUtils?.localized || (() => ''))(obj, field);
   }
 
-  // 渲染产品分类侧边栏
-  function renderProductSidebar(container, categories, currentCat) {
-    const items = categories.map(cat => {
-      const isActive = cat.id === currentCat ? 'active' : '';
-      return `<a href="index.html?cat=${cat.id}" class="list-group-item list-group-item-action ${isActive}">${localized(cat, 'name')}</a>`;
+  // 渲染分销品牌卡片（与代理品牌页面格式一致：Logo + 名称 + 官网链接 + 简短说明）
+  function renderDistributionBrandCards(container, brands) {
+    if (!brands || brands.length === 0) {
+      container.innerHTML = '<div class="text-center text-muted py-5"><p>暂无分销品牌数据</p></div>';
+      return;
+    }
+    const lang = window.HYXData && window.HYXData.lang ? window.HYXData.lang : 'zh';
+    const nameKey = lang === 'zh' ? 'name' : 'nameEn';
+    const descKey = lang === 'zh' ? 'description' : 'descriptionEn';
+    const basePath = getBasePath();
+    const cards = brands.map(b => {
+      const name = b[nameKey] || b.name;
+      const desc = b[descKey] || b.description || '';
+      const url = b.url || '#';
+      const logo = b.logo || '';
+      const logoSrc = (logo && logo.startsWith('http')) ? logo : (basePath + logo);
+      return `
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="card brand-card h-100">
+            <div class="brand-logo-wrap">
+              <img src="${logoSrc}" class="brand-logo" alt="${name}" onerror="this.style.display='none'; var s=this.nextElementSibling; if(s){ s.style.display='block'; s.classList.remove('d-none'); }">
+              <span class="d-none fw-bold text-secondary">${name}</span>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">${name}</h5>
+              <p class="card-text">${desc}</p>
+              <a href="${url}" target="_blank" rel="noopener noreferrer" class="brand-link">访问官网 &#8594;</a>
+            </div>
+          </div>
+        </div>
+      `;
     }).join('');
+    container.innerHTML = `<div class="row g-4">${cards}</div>`;
+  }
 
-    container.innerHTML = `
-      <h6 class="mb-3 fw-bold text-dark">${t('products.categories')}</h6>
-      <div class="list-group list-group-flush">${items}</div>
-    `;
+  // 渲染代理品牌卡片（Logo + 名称 + 官网链接 + 简短说明）
+  function renderBrandCards(container, brands) {
+    if (!brands || brands.length === 0) {
+      container.innerHTML = '<div class="text-center text-muted py-5"><p>暂无代理品牌数据</p></div>';
+      return;
+    }
+    const lang = window.HYXData && window.HYXData.lang ? window.HYXData.lang : 'zh';
+    const nameKey = lang === 'zh' ? 'name' : 'nameEn';
+    const descKey = lang === 'zh' ? 'description' : 'descriptionEn';
+    const basePath = getBasePath();
+    const cards = brands.map(b => {
+      const name = b[nameKey] || b.name;
+      const desc = b[descKey] || b.description || '';
+      const url = b.url || '#';
+      const logo = b.logo || '';
+      const logoSrc = (logo && logo.startsWith('http')) ? logo : (basePath + logo);
+      return `
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="card brand-card h-100">
+            <div class="brand-logo-wrap">
+              <img src="${logoSrc}" class="brand-logo" alt="${name}" onerror="this.style.display='none'; var s=this.nextElementSibling; if(s){ s.style.display='block'; s.classList.remove('d-none'); }">
+              <span class="d-none fw-bold text-secondary">${name}</span>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">${name}</h5>
+              <p class="card-text">${desc}</p>
+              <a href="${url}" target="_blank" rel="noopener noreferrer" class="brand-link">访问官网 &#8594;</a>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    container.innerHTML = `<div class="row g-4">${cards}</div>`;
   }
 
   // 渲染产品卡片
@@ -88,7 +169,7 @@
   // 渲染新闻卡片
   function renderNewsCards(container, news, basePath, limit = null) {
     if (!news || news.length === 0) {
-      container.innerHTML = '<div class="text-center text-muted py-5"><p>暂无新闻数据</p></div>';
+      container.innerHTML = '<div class="text-center text-muted py-5 py-lg-5"><p class="mb-0">内容筹备中，敬请期待。</p></div>';
       return;
     }
 
@@ -178,11 +259,16 @@
     container.innerHTML = items;
   }
 
-  // 渲染首页新闻区块
+  // 渲染首页新闻区块（链接使用 navBase 以保持同语言）
   async function renderHomeNews(container) {
     const newsData = await loadNews();
-    const news = newsData.news.slice(0, 3);
-    const basePath = getBasePath();
+    const news = (newsData.news || []).slice(0, 3);
+    const basePath = (window.HYXUtils && window.HYXUtils.getNavBasePath) ? window.HYXUtils.getNavBasePath() : getBasePath();
+
+    if (!news || news.length === 0) {
+      container.innerHTML = '<div class="text-center text-muted py-4"><p class="mb-0">内容筹备中，敬请期待。</p><a href="' + basePath + 'news/index.html" class="btn btn-hyx-outline mt-3">' + t('news.readMore') + '</a></div>';
+      return;
+    }
 
     const cards = news.map(item => `
       <div class="col-md-6 col-lg-4">
@@ -206,14 +292,81 @@
     `;
   }
 
+  // 加载应用框图分类
+  async function loadDiagramCategories() {
+    try {
+      const basePath = getBasePath();
+      const response = await fetch(basePath + 'data/diagram-categories.json');
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const data = await response.json();
+      return data && data.categories ? data.categories : [];
+    } catch (err) {
+      console.error('Failed to load diagram categories:', err);
+      return [];
+    }
+  }
+
+  // 计算框图图片地址
+  function diagramImgSrc(url, basePath) {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/')) return url;
+    const imgBase = (basePath !== undefined && basePath !== null) ? basePath : getBasePath();
+    return imgBase.replace(/\/?$/, '/') + url.replace(/^\//, '');
+  }
+
+  // 渲染应用框图页：左侧分类列表，右侧默认只显示当前选中一项
+  function renderDiagramPage(sidebarEl, contentEl, categories, basePath) {
+    if (!categories || categories.length === 0) {
+      if (sidebarEl) sidebarEl.innerHTML = '<p class="text-muted small">暂无分类</p>';
+      if (contentEl) contentEl.innerHTML = '<p class="text-muted">内容筹备中，敬请期待。</p>';
+      return;
+    }
+    const lang = (window.HYXData && window.HYXData.lang) ? window.HYXData.lang : 'zh';
+    const nameKey = lang === 'zh' ? 'name' : 'nameEn';
+    const subNameKey = lang === 'zh' ? 'subName' : 'subNameEn';
+
+    if (sidebarEl) {
+      sidebarEl.innerHTML = categories.map((cat, i) => `
+        <a href="javascript:void(0)" class="list-group-item list-group-item-action diagram-nav-item ${i === 0 ? 'active' : ''}" data-id="${cat.id}">
+          <div class="fw-semibold">${cat[nameKey]}</div>
+          <div class="small text-muted">${cat[subNameKey]}</div>
+        </a>
+      `).join('');
+    }
+
+    // 右侧只显示默认选中的第一项
+    updateDiagramContent(contentEl, categories[0], basePath);
+  }
+
+  // 更新右侧框图区域为指定分类（供点击左侧标签时调用）
+  function updateDiagramContent(contentEl, category, basePath) {
+    if (!contentEl || !category) return;
+    const lang = (window.HYXData && window.HYXData.lang) ? window.HYXData.lang : 'zh';
+    const nameKey = lang === 'zh' ? 'name' : 'nameEn';
+    const subNameKey = lang === 'zh' ? 'subName' : 'subNameEn';
+    const src = diagramImgSrc(category.image, basePath);
+    contentEl.innerHTML = `
+      <div class="diagram-block">
+        <h3 class="h5 fw-bold mb-3">${category[nameKey]} · ${category[subNameKey]}</h3>
+        <img src="${src}" alt="${category[nameKey]} ${category[subNameKey]}" class="img-fluid rounded shadow diagram-img" onerror="this.style.background='#f3f4f6';this.alt='图片加载失败：'+this.alt;">
+      </div>
+    `;
+  }
+
   // 暴露全局方法
   window.HYXRenderer = {
     loadProducts,
     loadNews,
-    renderProductSidebar,
+    loadBrands,
+    loadDistributionBrands,
+    loadDiagramCategories,
+    renderDistributionBrandCards,
     renderProductCards,
+    renderBrandCards,
     renderNewsCards,
     renderNewsTabs,
+    renderDiagramPage,
+    updateDiagramContent,
     renderContactCards,
     renderLocations,
     renderHomeNews

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="../../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../../assets/logo.png">
+  <meta name="description" content="Авторизованные бренды - HYIC">
+  <title>Авторизованные бренды - HYIC</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header" id="hyx-header"></header>
+
+  <div class="page-hero">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="../index.html" data-i18n="nav.home">Главная</a></li>
+          <li class="breadcrumb-item"><a href="distribution.html" data-i18n="nav.products">Продукция</a></li>
+          <li class="breadcrumb-item active" aria-current="page" data-i18n="nav.dropdown.authorized">Авторизованные бренды</li>
+        </ol>
+      </nav>
+      <h1 data-i18n="nav.dropdown.authorized">Авторизованные бренды</h1>
+      <p class="mb-0 opacity-90" data-i18n="products.brandsSubtitle">Авторизованные бренды с ссылками на сайты и описаниями</p>
+    </div>
+  </div>
+
+  <main class="py-5">
+    <div class="container">
+      <div id="brands-container"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="hyx-footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../js/components.js"></script>
+  <script src="../../js/data-loader.js"></script>
+  <script>
+    document.addEventListener('hyx-components-ready', async function() {
+      if (!window.HYXRenderer || !HYXRenderer.loadBrands || !HYXRenderer.renderBrandCards) return;
+      var data = await HYXRenderer.loadBrands();
+      var container = document.getElementById('brands-container');
+      if (container) HYXRenderer.renderBrandCards(container, data.brands || []);
+    });
+  </script>
+</body>
+</html>

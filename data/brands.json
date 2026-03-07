@@ -1,0 +1,112 @@
+{
+  "brands": [
+    {
+      "id": 1,
+      "name": "华朔",
+      "nameEn": "Huashuo",
+      "logo": "assets/brands/华朔.png",
+      "url": "https://www.hs-semi.cn/",
+      "description": "中低压 N & P MOSFETs。",
+      "descriptionEn": "Mid-low voltage N & P channel MOSFETs."
+    },
+    {
+      "id": 2,
+      "name": "长晶",
+      "nameEn": "Changjing",
+      "logo": "assets/brands/长晶.png",
+      "url": "https://www.jscj-elec.com/",
+      "description": "二三极管，TVS, ESD, MOS, LDO。",
+      "descriptionEn": "Diodes, transistors, TVS, ESD, MOS, LDO."
+    },
+    {
+      "id": 3,
+      "name": "通科",
+      "nameEn": "Tongke",
+      "logo": "assets/brands/通科.png",
+      "url": "https://www.ctk-elec.com/",
+      "description": "二三极管，TVS，ESD。",
+      "descriptionEn": "Diodes, transistors, TVS, ESD."
+    },
+    {
+      "id": 4,
+      "name": "芯导",
+      "nameEn": "Prisemi",
+      "logo": "assets/brands/芯导.png",
+      "url": "https://www.prisemi.com/",
+      "description": "TVS，ESD，MOS，OVP，锂电池充电IC。",
+      "descriptionEn": "TVS, ESD, MOS, OVP, Li-ion battery charging IC."
+    },
+    {
+      "id": 5,
+      "name": "永铭",
+      "nameEn": "Yongming",
+      "logo": "assets/brands/永铭.png",
+      "url": "https://www.ymin.com/",
+      "description": "电解电容，超级电容。",
+      "descriptionEn": "Electrolytic capacitors, supercapacitors."
+    },
+    {
+      "id": 6,
+      "name": "聚鼎",
+      "nameEn": "Polytronics",
+      "logo": "assets/brands/聚鼎.png",
+      "url": "https://www.pttc.com.tw/",
+      "description": "自恢复保险丝，三端保险丝，TVS。",
+      "descriptionEn": "PPTC fuses, three-terminal fuses, TVS."
+    },
+    {
+      "id": 7,
+      "name": "陆海",
+      "nameEn": "Sea&Land",
+      "logo": "assets/brands/陆海.png",
+      "url": "http://www.sealand-pptc.com/",
+      "description": "自恢复保险丝。",
+      "descriptionEn": "PPTC self-recovery fuses."
+    },
+    {
+      "id": 8,
+      "name": "矽晟瑞",
+      "nameEn": "Sicenry",
+      "logo": "assets/brands/矽晟瑞.png",
+      "url": "https://www.sicenry.com/",
+      "description": "非隔离驱动IC，电机驱动IC，隔离与接口。",
+      "descriptionEn": "Non-isolated driver IC, motor driver IC, isolation and interface."
+    },
+    {
+      "id": 9,
+      "name": "靖芯",
+      "nameEn": "Jingxin",
+      "logo": "assets/brands/靖芯.png",
+      "url": "https://www.stbchip.com/",
+      "description": "LDO, DC-DC，OVP。",
+      "descriptionEn": "LDO, DC-DC, OVP."
+    },
+    {
+      "id": 10,
+      "name": "率能",
+      "nameEn": "Leadpower",
+      "logo": "assets/brands/率能.png",
+      "url": "https://www.leadpoweric.com/",
+      "description": "有刷，无刷，步进马达驱动IC。",
+      "descriptionEn": "Brushed, brushless, stepper motor driver IC."
+    },
+    {
+      "id": 11,
+      "name": "成绎",
+      "nameEn": "Covale",
+      "logo": "assets/brands/成绎.png",
+      "url": "https://www.covale.cn/",
+      "description": "降压DC-DC，LDO，负载开关，信号开关，电平转换IC，E-MARK，Type-C，PD控制器，诱骗IC。",
+      "descriptionEn": "Buck DC-DC, LDO, load switch, signal switch, level translator, E-MARK, Type-C, PD controller."
+    },
+    {
+      "id": 12,
+      "name": "东沅",
+      "nameEn": "Dongyuan",
+      "logo": "assets/brands/东沅.png",
+      "url": "http://www.fetek.com.tw",
+      "description": "中低压 N & P MOSFETs。",
+      "descriptionEn": "Mid-low voltage N & P channel MOSFETs."
+    }
+  ]
+}

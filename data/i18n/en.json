@@ -6,11 +6,12 @@
     "news": "News",
     "contact": "Contact",
     "dropdown": {
-      "passive": "Passive Components",
+      "authorized": "Authorized Brands",
+      "distribution": "Distribution Brands",
+      "diagrams": "Application Block Diagrams",
       "capacitor": "Capacitors",
       "resistor": "Resistors",
       "inductor": "Inductors",
-      "active": "Active Components",
       "ic": "IC Chips",
       "intro": "Company Overview",
       "history": "History",
@@ -24,19 +25,26 @@
   },
   "products": {
     "title": "Products",
-    "subtitle": "Passive and Active Components, Capacitors, Resistors, Inductors, ICs",
+    "subtitle": "Authorized and distribution brands",
+    "brandsSubtitle": "Authorized brands with official links and product descriptions",
+    "distributionSubtitle": "Distribution product categories, click to view product list",
+    "viewProducts": "View Products",
     "categories": "Categories",
     "inquiry": "Inquiry",
     "download": "Download Datasheet"
   },
+  "diagrams": {
+    "subtitle": "Wearables, power adapter, motor drive and more solution references"
+  },
   "news": {
     "title": "News",
-    "subtitle": "Company News, Industry Updates, Technical Articles",
+    "subtitle": "Company News, Industry Updates",
     "all": "All",
     "company": "Company News",
     "industry": "Industry News",
     "tech": "Technical Articles",
-    "readMore": "More News"
+    "readMore": "More News",
+    "backToList": "Back to List"
   },
   "contact": {
     "title": "Contact Us",

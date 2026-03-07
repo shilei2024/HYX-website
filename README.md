@@ -1,118 +1,83 @@
 # 深圳市弘易芯科技有限公司 - 企业官网
 
-基于数据驱动架构的企业官网，采用 HTML5 + CSS3 + JavaScript，Bootstrap 5 响应式布局，主色调为科技蓝与深灰，风格专业简洁。
+[![License](https://img.shields.io/badge/license-Proprietary-blue.svg)](LICENSE)
 
-**生产环境版本** - 可直接部署到服务器
+基于数据驱动架构的企业官网，采用 HTML5 + CSS3 + JavaScript (ES6+)，Bootstrap 5 响应式布局。主色调为科技蓝与深灰，风格专业简洁。
+
+## 项目特性
+
+- **多语言支持**：中文、英文、俄文三语言版本
+- **数据驱动**：所有内容通过 JSON 文件管理，便于维护
+- **响应式设计**：适配桌面、平板、手机各种设备
+- **SEO 优化**：语义化 HTML、Meta 标签、多语言 hreflang
+- **性能优化**：Gzip 压缩、静态资源缓存、CDN 加速
 
 ## 项目结构
 
 ```
 HYX-Website/
 ├── index.html                    # 首页（中文）
+├── search.html                   # 站内搜索
+├── privacy.html                  # 隐私政策
+├── terms.html                    # 使用条款
 ├── assets/
 │   ├── logo.png                  # 公司 Logo
-│   └── logo.svg                  # 公司 Logo（SVG 备用）
+│   ├── logo.svg                  # 公司 Logo（SVG）
+│   ├── brands/                   # 代理品牌 Logo
+│   ├── diagrams/                 # 应用框图图片
+│   └── images/                   # 其他图片资源
 ├── css/
 │   └── styles.css                # 全局样式
 ├── js/
-│   ├── components.js             # 组件加载器（导航、页脚）
-│   └── data-loader.js            # 数据渲染器
+│   ├── components.js             # 组件加载器（导航、页脚、多语言）
+│   └── data-loader.js            # 数据渲染器（产品、新闻、品牌）
 ├── data/
-│   ├── config.json               # 网站配置（联系方式、公司信息等）
-│   ├── products.json             # 产品数据
+│   ├── config.json               # 网站配置（联系方式、公司信息）
+│   ├── products.json             # 产品分类数据
+│   ├── brands.json               # 代理品牌数据
+│   ├── distribution-brands.json  # 分销品牌数据
 │   ├── news.json                 # 新闻数据
+│   ├── diagram-categories.json   # 应用框图分类
 │   └── i18n/
 │       ├── zh.json               # 中文翻译
 │       ├── en.json               # 英文翻译
 │       └── ru.json               # 俄文翻译
 ├── products/                     # 产品中心（中文）
-│   ├── index.html
-│   └── detail.html
 ├── about/                        # 关于我们（中文）
-│   ├── index.html
-│   ├── history.html
-│   ├── team.html
-│   ├── supply-chain.html
-│   └── qualifications.html
 ├── news/                         # 新闻中心（中文）
-│   ├── index.html
-│   └── detail.html
 ├── contact/                      # 联系我们（中文）
 ├── en/                           # 英文版
-│   ├── index.html
-│   ├── products/
-│   ├── news/
-│   └── contact/
-├── ru/                           # 俄语版
-│   ├── index.html
-│   ├── products/
-│   ├── news/
-│   └── contact/
-└── README.md
+├── ru/                           # 俄文版
+├── nginx.conf                    # Nginx 配置示例
+├── .htaccess                     # Apache 配置示例
+├── README.md                     # 项目说明
+└── 部署说明.md                    # 详细部署指南
 ```
 
-## 部署到服务器
+## 快速开始
 
-### 方式 1：静态文件部署（推荐）
-
-将项目所有文件上传到 Web 服务器（Nginx/Apache）的 web 目录即可。
-
-#### Nginx 配置示例
-
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-    root /path/to/HYX-Website;
-    index index.html;
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    # 启用 Gzip 压缩
-    gzip on;
-    gzip_types text/css application/javascript application/json;
-    
-    # 缓存静态资源
-    location ~* \.(css|js|png|jpg|jpeg|gif|ico|json)$ {
-        expires 7d;
-        add_header Cache-Control "public, immutable";
-    }
-}
-```
-
-#### Apache 配置示例
-
-创建 `.htaccess` 文件：
-
-```apache
-RewriteEngine On
-RewriteBase /
-RewriteRule ^index\.html$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
-
-# 启用压缩
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/css application/javascript application/json
-</IfModule>
-```
-
-### 方式 2：使用 Node.js 服务器
+### 本地预览
 
 ```bash
-# 安装 serve
-npm install -g serve
+# 使用 Python
+cd HYX-website
+python -m http.server 8080
 
-# 启动服务器
-serve -s . -p 8080
+# 或使用 Node.js
+npx serve .
 ```
 
-### 方式 3：使用 Docker
+访问 http://localhost:8080
 
-创建 `Dockerfile`：
+## 部署指南
+
+### 方式一：静态文件部署（推荐）
+
+将项目所有文件上传到 Web 服务器的根目录即可。
+
+详细部署步骤请参阅 [部署说明.md](./部署说明.md)。
+
+### 方式二：Docker 部署
 
 ```dockerfile
 FROM nginx:alpine
@@ -121,14 +86,12 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-构建和运行：
-
 ```bash
 docker build -t hyx-website .
-docker run -p 80:80 hyx-website
+docker run -d -p 80:80 hyx-website
 ```
 
-## 内容更新指南
+## 内容管理
 
 ### 更新联系方式
 
@@ -141,122 +104,77 @@ docker run -p 80:80 hyx-website
     "phoneDisplay": "138 2367 4897",
     "email": "bill.zhang@hyic-tech.cn",
     "contactPerson": "张先生",
-    "addressFull": "深圳市南山区科技园"
+    "addressFull": "深圳市龙华区民治街道新龙大厦2008A"
   }
 }
 ```
 
-### 添加新产品
+### 添加代理品牌
 
-编辑 `data/products.json`，在 `products` 数组中添加：
+编辑 `data/brands.json`，在 `brands` 数组中添加：
 
 ```json
 {
-  "id": 7,
-  "name": "新产品名称",
-  "nameEn": "New Product Name",
-  "category": "capacitor",
-  "description": "产品描述",
-  "descriptionEn": "Product description",
-  "image": "图片 URL"
+  "id": 13,
+  "name": "品牌名称",
+  "nameEn": "Brand Name",
+  "logo": "assets/brands/品牌名称.png",
+  "url": "https://brand-website.com/",
+  "description": "品牌描述",
+  "descriptionEn": "Brand description"
 }
 ```
 
-### 添加新闻
+### 配置表单提交
 
-编辑 `data/news.json`，在 `news` 数组中添加：
+1. 访问 [Formspree](https://formspree.io) 注册账号
+2. 创建表单获取 Form ID
+3. 在 `data/config.json` 中配置：
 
 ```json
 {
-  "id": 7,
-  "title": "新闻标题",
-  "titleEn": "News Title",
-  "type": "company",
-  "date": "2025-03-07",
-  "summary": "新闻摘要",
-  "summaryEn": "News summary",
-  "image": "图片 URL"
+  "contact": {
+    "formspreeFormId": "your-form-id"
+  }
 }
 ```
 
 ### 更新备案号
 
-备案号下来后，在 `data/config.json` 的 `footer` 中更新：
+在 `data/config.json` 的 `footer` 中更新：
 
-- `icp`：填写实际 ICP 备案号（如 `粤ICP备12345678号`），链接已指向 [https://beian.miit.gov.cn/](https://beian.miit.gov.cn/)
-- `policeBeiAn`：填写实际公安备案号（如 `粤公安备12345678901号`），链接已指向 [https://beian.mps.gov.cn/](https://beian.mps.gov.cn/)
-
-当前为占位符，仅需替换为真实号码即可。
-
-### 更新多语言翻译
-
-编辑 `data/i18n/` 目录下的文件：
-- `zh.json` - 中文
-- `en.json` - 英文
-- `ru.json` - 俄文
-
-### 更新 Logo
-
-替换 `assets/logo.png` 文件即可。
-建议尺寸：高度 40px，宽度按比例，格式 PNG 或 SVG。
-
-## 本地开发
-
-### 使用 Python
-
-```bash
-python -m http.server 8080
+```json
+{
+  "footer": {
+    "icp": "粤ICP备12345678号",
+    "policeBeiAn": "粤公安备12345678901号"
+  }
+}
 ```
-
-访问 http://localhost:8080
-
-### 使用 Node.js
-
-```bash
-npx serve .
-```
-
-访问 http://localhost:3000
 
 ## 技术栈
 
-- **前端框架**: HTML5, CSS3, JavaScript (ES6+)
-- **UI 框架**: Bootstrap 5.3.2 (CDN)
-- **数据格式**: JSON
-- **部署方式**: 静态文件部署
-- **构建工具**: 无（纯静态，无需构建）
+| 技术 | 版本 | 用途 |
+|------|------|------|
+| HTML5 | - | 页面结构 |
+| CSS3 | - | 样式设计 |
+| JavaScript | ES6+ | 交互逻辑 |
+| Bootstrap | 5.3.2 | UI 框架（CDN） |
 
 ## 浏览器兼容性
 
-- Chrome (推荐)
+- Chrome（推荐）
 - Firefox
 - Safari
 - Edge
-- IE 11+ (有限支持)
-
-## 性能优化建议
-
-1. **启用 Gzip 压缩** - 减少传输大小
-2. **使用 CDN** - 加速 Bootstrap 等第三方资源
-3. **图片优化** - 压缩图片，使用 WebP 格式
-4. **缓存策略** - 设置合理的缓存头
-5. **懒加载** - 图片和非关键资源懒加载
-
-## SEO 优化建议
-
-1. **Meta 标签** - 每个页面都有独特的 title 和 description
-2. **语义化 HTML** - 使用正确的标签结构
-3. **sitemap.xml** - 创建并提交站点地图
-4. **robots.txt** - 配置搜索引擎爬虫规则
-5. **多语言** - 使用 hreflang 标签标注语言版本
 
 ## 联系方式
 
-- **联系人**: 张先生
-- **电话**: 138 2367 4897
-- **邮箱**: bill.zhang@hyic-tech.cn
-- **地址**: 深圳市南山区科技园
+- **联系人**：张先生
+- **电话**：138 2367 4897
+- **邮箱**：bill.zhang@hyic-tech.cn
+- **地址**：深圳市龙华区民治街道新龙大厦2008A
 
 ---
 
-© 2025 深圳市弘易芯科技有限公司 版权所有
+© 2026 深圳市弘易芯科技有限公司 版权所有

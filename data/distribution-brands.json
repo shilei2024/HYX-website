@@ -1,0 +1,49 @@
+{
+  "brands": [
+    {
+      "id": 1,
+      "name": "兆易创新",
+      "nameEn": "GigaDevice",
+      "logo": "assets/brands/兆易创新.png",
+      "url": "https://www.gigadevice.com/",
+      "description": "MCU，FLASH。",
+      "descriptionEn": "MCU, FLASH."
+    },
+    {
+      "id": 2,
+      "name": "矽力杰",
+      "nameEn": "Silergy",
+      "logo": "assets/brands/矽力杰.png",
+      "url": "https://www.silergy.com/",
+      "description": "DC-DC, LDO，传感器，光感。",
+      "descriptionEn": "DC-DC, LDO, sensors, optical."
+    },
+    {
+      "id": 3,
+      "name": "大毅科技",
+      "nameEn": "Ta-I",
+      "logo": "assets/brands/大毅.png",
+      "url": "https://www.tai.com.tw/",
+      "description": "合金电阻，保险丝。",
+      "descriptionEn": "Alloy resistor, fuses."
+    },
+    {
+      "id": 4,
+      "name": "DIODES",
+      "nameEn": "Diodes Incorporated",
+      "logo": "assets/brands/Diodes.png",
+      "url": "https://www.diodes.com/",
+      "description": "二极管、整流器、晶体管。",
+      "descriptionEn": "Diodes, rectifiers, transistors."
+    },
+    {
+      "id": 5,
+      "name": "ROHM",
+      "nameEn": "ROHM Semiconductor",
+      "logo": "assets/brands/Rohm.png",
+      "url": "https://www.rohm.com/",
+      "description": "电源管理，运放，传感器，电机。",
+      "descriptionEn": "Power management, op-amps, sensors, motor drivers."
+    }
+  ]
+}

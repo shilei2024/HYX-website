@@ -11,6 +11,7 @@
   --gray-900: #1a1d21;
   --gray-800: #2d3238;
   --gray-700: #4a5058;
+  --gray-600: #5c6370;
   --gray-500: #6b7280;
   --gray-300: #d1d5db;
   --gray-100: #f3f4f6;
@@ -51,7 +52,7 @@ a:hover {
 }
 
 .navbar-hyx {
-  padding: 0.5rem 0;
+  padding: 0.2rem 0;
 }
 
 .navbar-hyx .navbar-brand {
@@ -63,8 +64,8 @@ a:hover {
 }
 
 .navbar-hyx .navbar-brand img {
-  height: 40px;
-  margin-right: 10px;
+  height: 60px;
+  margin-right: 12px;
 }
 
 .navbar-hyx .nav-link {
@@ -139,6 +140,21 @@ a:hover {
 .search-box-header .form-control:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(10, 77, 140, 0.15);
+}
+
+.search-box-header .btn-search-icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.search-box-header .btn-search-icon svg {
+  display: block;
 }
 
 /* ========== Banner 轮播 ========== */
@@ -399,32 +415,195 @@ a:hover {
   color: var(--gray-900);
 }
 
-/* ========== 关于我们 / 内页 ========== */
-.page-hero {
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-  color: var(--white);
-  padding: 3rem 0;
-  margin-bottom: 2rem;
+/* ========== 代理品牌卡片 ========== */
+.brand-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  transition: transform var(--transition), box-shadow var(--transition);
+  height: 100%;
+  overflow: hidden;
 }
 
-.page-hero h1 {
-  font-size: 2rem;
-  font-weight: 700;
+.brand-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.brand-card .brand-logo-wrap {
+  height: 120px;
+  padding: 1rem;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background: var(--gray-100);
+}
+
+.brand-card .brand-logo-wrap img {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.brand-card .brand-logo-wrap span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-size: 1.25rem;
+}
+
+.brand-card .card-body {
+  padding: 1.25rem;
+}
+
+.brand-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gray-900);
   margin-bottom: 0.5rem;
 }
 
+.brand-card .card-text {
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+
+.brand-card .brand-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.brand-card .brand-link:hover {
+  color: var(--primary-light);
+}
+
+/* ========== 应用框图页 ========== */
+.diagram-sidebar .list-group-item {
+  border-radius: 8px;
+  margin-bottom: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid transparent;
+  color: var(--gray-700);
+  transition: all var(--transition);
+}
+
+.diagram-sidebar .list-group-item:hover,
+.diagram-sidebar .list-group-item.active {
+  background: var(--gray-100);
+  color: var(--primary);
+  border-left: 3px solid var(--primary);
+}
+
+.diagram-sidebar .list-group-item .fw-semibold {
+  color: inherit;
+}
+
+.diagram-block {
+  scroll-margin-top: 1rem;
+}
+
+.diagram-block h3 {
+  color: var(--gray-800);
+  font-size: 1.1rem;
+}
+
+.diagram-img {
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  max-width: 100%;
+  height: auto;
+  background: var(--gray-100);
+}
+
+/* ========== 关于我们 / 新闻中心 / 联系我们 - 英雄区 ========== */
+.page-hero {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+  color: var(--white);
+  padding: 3.25rem 0;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse 80% 50% at 90% 50%, rgba(0, 160, 233, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.page-hero .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* 面包屑 - 更柔和的层级 */
 .page-hero .breadcrumb {
   background: transparent;
   padding: 0;
-  margin: 0;
+  margin: 0 0 1rem 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .page-hero .breadcrumb-item a {
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.88);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.page-hero .breadcrumb-item a:hover {
+  color: var(--white);
+}
+
+.page-hero .breadcrumb-item + .breadcrumb-item::before {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .page-hero .breadcrumb-item.active {
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+}
+
+/* 主标题 - 清晰层级与品牌感 */
+.page-hero h1 {
+  font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.875rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+  color: var(--white);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* 副标题 / 描述 - 与主标题区分且协调 */
+.page-hero p.mb-0.opacity-90,
+.page-hero .page-hero-desc {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.88);
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+  margin-bottom: 0;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .content-section img {
@@ -432,6 +611,35 @@ a:hover {
   height: auto;
   border-radius: 8px;
   box-shadow: var(--shadow);
+}
+
+.serving-customers-image-wrap img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 隐私政策 / 使用条款 法律正文 */
+.legal-content {
+  color: var(--gray-800);
+  line-height: 1.75;
+}
+
+.legal-content h2 {
+  color: var(--gray-900);
+}
+
+.legal-content ul {
+  padding-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.legal-content ul li {
+  margin-bottom: 0.5rem;
+}
+
+.legal-content p {
+  margin-bottom: 1rem;
 }
 
 /* ========== 联系我们 ========== */
@@ -581,5 +789,42 @@ a:hover {
 
   .section-title {
     font-size: 1.5rem;
+  }
+}
+
+/* 英雄区响应式 */
+@media (max-width: 991.98px) {
+  .page-hero {
+    padding: 2.5rem 0;
+  }
+
+  .page-hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .page-hero p.mb-0.opacity-90,
+  .page-hero .page-hero-desc {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .page-hero {
+    padding: 2rem 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-hero h1 {
+    font-size: 1.4rem;
+    letter-spacing: 0.02em;
+  }
+
+  .page-hero .breadcrumb {
+    font-size: 0.8125rem;
+  }
+
+  .page-hero p.mb-0.opacity-90,
+  .page-hero .page-hero-desc {
+    font-size: 0.875rem;
   }
 }

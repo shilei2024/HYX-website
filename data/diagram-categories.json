@@ -1,0 +1,52 @@
+{
+  "categories": [
+    {
+      "id": "wearable",
+      "name": "智能穿戴类",
+      "subName": "蓝牙耳机 / 智能手环手表 / 智能眼镜",
+      "nameEn": "Wearables",
+      "subNameEn": "TWS / Smart Band & Watch / Smart Glasses",
+      "image": "assets/diagrams/wearable.png"
+    },
+    {
+      "id": "power-adapter",
+      "name": "电源转接类",
+      "subName": "扩展坞",
+      "nameEn": "Power & Adapter",
+      "subNameEn": "Docking Station",
+      "image": "assets/diagrams/power-adapter.png"
+    },
+    {
+      "id": "motor-brush-stepper",
+      "name": "电机驱动类",
+      "subName": "有刷 / 步进电机",
+      "nameEn": "Motor Drive",
+      "subNameEn": "Brushed / Stepper Motor",
+      "image": "assets/diagrams/motor-brush-stepper.png"
+    },
+    {
+      "id": "motor-ventilator",
+      "name": "电机驱动类",
+      "subName": "呼吸机",
+      "nameEn": "Motor Drive",
+      "subNameEn": "Ventilator",
+      "image": "assets/diagrams/motor-ventilator.png"
+    },
+    {
+      "id": "motor-tools",
+      "name": "电机驱动类",
+      "subName": "电动工具",
+      "nameEn": "Motor Drive",
+      "subNameEn": "Power Tools",
+      "image": "assets/diagrams/motor-tools.png"
+    },
+    {
+      "id": "motor-forklift",
+      "name": "电机驱动类",
+      "subName": "工业叉车",
+      "nameEn": "Motor Drive",
+      "subNameEn": "Industrial Forklift",
+      "image": "assets/diagrams/motor-forklift.png"
+    }
+  ]
+}

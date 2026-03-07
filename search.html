@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+  <meta name="description" content="站内搜索 - 弘易芯科技">
+  <title>站内搜索 - 弘易芯科技</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header" id="hyx-header"></header>
+
+  <div class="page-hero">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html" data-i18n="nav.home">首页</a></li>
+        <li class="breadcrumb-item active" aria-current="page" data-i18n="search.title">站内搜索</li>
+      </ol>
+      <h1 data-i18n="search.title">站内搜索</h1>
+      <p class="mb-0 opacity-90" data-i18n="search.subtitle">搜索产品、品牌与新闻</p>
+    </div>
+  </div>
+
+  <main class="content-section py-5">
+    <div class="container">
+      <form class="d-flex search-box-header mb-4 mx-auto" id="search-page-form" role="search" style="max-width: 400px;">
+        <input class="form-control" type="search" id="search-page-input" data-placeholder="search.placeholder" placeholder="输入关键词搜索" aria-label="搜索">
+        <button class="btn btn-primary ms-2 btn-search-icon" type="submit" aria-label="搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </form>
+
+      <div id="search-results"></div>
+      <div id="search-empty" class="text-center text-muted py-5" style="display:none;">
+        <p class="mb-0"><span id="search-empty-text"></span></p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="hyx-footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    (function() {
+      var basePath = (window.HYXUtils && window.HYXUtils.getBasePath) ? window.HYXUtils.getBasePath() : './';
+      var navBase = (window.HYXUtils && window.HYXUtils.getNavBasePath) ? window.HYXUtils.getNavBasePath() : basePath;
+      function getT(key) { return (window.HYXUtils && window.HYXUtils.getT) ? window.HYXUtils.getT(key) : key; }
+
+      function getQuery() {
+        var params = new URLSearchParams(window.location.search);
+        return (params.get('q') || '').trim();
+      }
+
+      function matchText(text, q) {
+        if (!text || !q) return false;
+        return String(text).toLowerCase().indexOf(q.toLowerCase()) !== -1;
+      }
+
+      function runSearch(q) {
+        var resultsEl = document.getElementById('search-results');
+        var emptyEl = document.getElementById('search-empty');
+        var emptyTextEl = document.getElementById('search-empty-text');
+        var searchInput = document.getElementById('search-page-input');
+        if (searchInput) searchInput.value = q;
+
+        if (!q) {
+          resultsEl.innerHTML = '<p class="text-center text-muted">' + (getT('search.prompt') || '请输入关键词后搜索。') + '</p>';
+          if (emptyTextEl) emptyTextEl.textContent = '';
+          emptyEl.style.display = 'none';
+          return;
+        }
+
+        var emptyMsg = (getT('search.empty') || '未找到与「{q}」相关的内容，请换一个关键词试试。').replace('{q}', q);
+        if (emptyTextEl) emptyTextEl.textContent = emptyMsg;
+
+        Promise.all([
+          fetch(basePath + 'data/products.json').then(function(r) { return r.ok ? r.json() : { products: [], categories: [] }; }).catch(function() { return { products: [], categories: [] }; }),
+          fetch(basePath + 'data/brands.json').then(function(r) { return r.ok ? r.json() : { brands: [] }; }).catch(function() { return { brands: [] }; }),
+          fetch(basePath + 'data/distribution-brands.json').then(function(r) { return r.ok ? r.json() : { brands: [] }; }).catch(function() { return { brands: [] }; }),
+          fetch(basePath + 'data/news.json').then(function(r) { return r.ok ? r.json() : { news: [] }; }).catch(function() { return { news: [] }; })
+        ]).then(function(arr) {
+          var productsData = arr[0];
+          var brandsData = arr[1];
+          var distData = arr[2];
+          var newsData = arr[3];
+
+          var products = (productsData.products || []).filter(function(p) {
+            return matchText(p.name, q) || matchText(p.nameEn, q) || matchText(p.description, q) || matchText(p.descriptionEn, q);
+          });
+          var brands = (brandsData.brands || []).filter(function(b) {
+            return matchText(b.name, q) || matchText(b.nameEn, q) || matchText(b.description, q) || matchText(b.descriptionEn, q);
+          });
+          var distBrands = (distData.brands || []).filter(function(b) {
+            return matchText(b.name, q) || matchText(b.nameEn, q) || matchText(b.description, q) || matchText(b.descriptionEn, q);
+          });
+          var news = (newsData.news || []).filter(function(n) {
+            return matchText(n.title, q) || matchText(n.titleEn, q) || matchText(n.summary, q) || matchText(n.summaryEn, q);
+          });
+
+          var sectionProducts = getT('search.sectionProducts') || '产品';
+          var sectionBrands = getT('search.sectionBrands') || '代理品牌';
+          var sectionDistribution = getT('search.sectionDistribution') || '分销品牌';
+          var sectionNews = getT('search.sectionNews') || '新闻';
+
+          var html = '';
+          if (products.length) {
+            html += '<section class="mb-5"><h2 class="h5 fw-bold mb-3">' + sectionProducts + '</h2><ul class="list-unstyled">';
+            products.forEach(function(p) {
+              var name = p.name || p.nameEn || '';
+              var catId = p.category;
+              var href = navBase + 'products/index.html?cat=' + (catId || '');
+              html += '<li class="mb-2"><a href="' + href + '">' + name + '</a></li>';
+            });
+            html += '</ul></section>';
+          }
+          if (brands.length) {
+            html += '<section class="mb-5"><h2 class="h5 fw-bold mb-3">' + sectionBrands + '</h2><ul class="list-unstyled">';
+            brands.forEach(function(b) {
+              var name = b.name || b.nameEn || '';
+              html += '<li class="mb-2"><a href="' + navBase + 'products/brands.html">' + name + '</a></li>';
+            });
+            html += '</ul></section>';
+          }
+          if (distBrands.length) {
+            html += '<section class="mb-5"><h2 class="h5 fw-bold mb-3">' + sectionDistribution + '</h2><ul class="list-unstyled">';
+            distBrands.forEach(function(b) {
+              var name = b.name || b.nameEn || '';
+              html += '<li class="mb-2"><a href="' + navBase + 'products/distribution.html">' + name + '</a></li>';
+            });
+            html += '</ul></section>';
+          }
+          if (news.length) {
+            html += '<section class="mb-5"><h2 class="h5 fw-bold mb-3">' + sectionNews + '</h2><ul class="list-unstyled">';
+            news.forEach(function(n) {
+              var title = n.title || n.titleEn || '';
+              html += '<li class="mb-2"><a href="' + navBase + 'news/detail.html?id=' + (n.id || '') + '">' + title + '</a></li>';
+            });
+            html += '</ul></section>';
+          }
+
+          if (html) {
+            resultsEl.innerHTML = html;
+            emptyEl.style.display = 'none';
+          } else {
+            resultsEl.innerHTML = '';
+            emptyEl.style.display = 'block';
+          }
+        });
+      }
+
+      document.getElementById('search-page-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var q = document.getElementById('search-page-input').value.trim();
+        if (q) {
+          window.location.href = navBase + 'search.html?q=' + encodeURIComponent(q);
+        }
+      });
+
+      function initSearch() {
+        runSearch(getQuery());
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSearch);
+      } else {
+        initSearch();
+      }
+    })();
+  </script>
+</body>
+</html>
