@@ -1,52 +1,34 @@
-# 弘易芯科技官网 - 部署文档
+# 弘易芯科技官网
 
-## 📖 文档说明
+企业官网静态站，支持 Docker 部署、Watch 自动同步与 **HTTPS（443）**。
 
-本文档提供从零开始的完整部署指南，适用于 Docker Compose v2.23.0+（推荐 v5.0+）。
+## 📁 文档与脚本
 
----
+| 文档/脚本 | 用途 |
+|-----------|------|
+| **[部署指南.md](部署指南.md)** | 从零部署（含 HTTPS 可选） |
+| **[日常更新.md](日常更新.md)** | 日常更新与维护 |
+| **[故障排查.md](故障排查.md)** | 常见问题排查 |
+| **[HTTPS配置指南.md](HTTPS配置指南.md)** | 443/SSL 证书与 Nginx 配置 |
+| `一键部署.sh` | 一键部署（可选启用 HTTPS） |
+| `manage-watch.sh` | Watch 模式管理 |
+| `install-service.sh` | systemd 开机自启 |
 
 ## 🎯 快速开始
 
-### 方式一：自动部署（推荐）
-
 ```bash
-# 1. 登录服务器
-ssh user@your-server-ip
-
-# 2. 进入网站目录
 cd /path/to/HYX-website
-
-# 3. 设置权限
-chmod +x setup-permissions.sh && ./setup-permissions.sh
-
-# 4. 执行一键部署
+chmod +x 一键部署.sh manage-watch.sh install-service.sh setup-permissions.sh
 ./一键部署.sh
 ```
 
-### 方式二：手动部署
+按提示选择是否启用 **HTTPS（443）**；启用前需将证书放入 `ssl/` 并修改 `nginx-https.conf` 域名，详见 [HTTPS配置指南.md](HTTPS配置指南.md)。手动部署见 [部署指南.md](部署指南.md)。
 
-详见 **[部署指南.md](部署指南.md)**
+## 🚀 功能
 
----
-
-## 📁 文档结构
-
-| 文档 | 用途 |
-|------|------|
-| **[部署指南.md](部署指南.md)** | 📖 完整部署步骤说明 |
-| **[日常更新.md](日常更新.md)** | 🔄 日常更新和维护操作 |
-| **[故障排查.md](故障排查.md)** | 🔍 常见问题解决方案 |
-| **[HTTPS 配置指南.md](HTTPS 配置指南.md)** | 🔒 HTTPS/SSL 证书配置 |
-
----
-
-## 🚀 核心功能
-
-- ✅ **自动同步**：`git pull` 后 3-5 秒自动更新
-- ✅ **无需重建**：不重新构建镜像，不重启容器
-- ✅ **生产就绪**：完整的日志、监控、管理功能
-- ✅ **开机自启**：可配置 systemd 服务
+- 一键部署：HTTP（80）或 HTTPS（80+443）
+- Watch 自动同步：`git pull` 后数秒生效（仅 HTTP 模式）
+- 开机自启：可安装 systemd 服务
 
 ---
 

@@ -26,3 +26,8 @@ temp/
 # 压缩包（可选）
 *.zip
 *.tar.gz
+
+# SSL 证书（勿提交到仓库）
+ssl/
+*.pem
+*.key

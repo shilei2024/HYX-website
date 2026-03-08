@@ -250,36 +250,9 @@ cp hyic-tech.cn.key /var/www/hyx-website/ssl/privkey.pem
 
 ## 步骤六：配置 HTTPS
 
-### 6.1 更新 Docker Compose 配置
+### 6.1 使用项目内的 HTTPS 配置
 
-创建 `docker-compose-https.yml`：
-
-```yaml
-version: '3.8'
-
-services:
-  hyx-website:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: hyx-website:latest
-    container_name: hyx-website
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./ssl:/etc/nginx/ssl:ro
-      - ./nginx-https.conf:/etc/nginx/conf.d/default.conf:ro
-    environment:
-      - TZ=Asia/Shanghai
-    networks:
-      - hyx-network
-
-networks:
-  hyx-network:
-    driver: bridge
-```
+项目已包含 `docker-compose-https.yml`（根目录），用于 80 + **443** 端口及 SSL 证书。请先完成「步骤四」或执行 `./一键部署.sh` 生成 `html/` 目录，并将证书放入 `ssl/`（见步骤五）。
 
 ### 6.2 修改 Nginx HTTPS 配置
 
@@ -295,15 +268,19 @@ server_name hyic-tech.cn www.hyic-tech.cn;
 ```bash
 cd /var/www/hyx-website
 
-# 停止旧容器
+# 停止当前容器（若已在运行）
 docker compose down
+docker compose -f docker-compose-https.yml down 2>/dev/null || true
 
-# 使用 HTTPS 配置启动
+# 使用 HTTPS 配置启动（80 + 443）
 docker compose -f docker-compose-https.yml up -d --build
 
-# 查看日志
-docker logs -f hyx-website
+# 查看状态与日志
+docker compose -f docker-compose-https.yml ps
+docker compose -f docker-compose-https.yml logs -f hyx-website
 ```
+
+**或在一键部署时选择**：执行 `./一键部署.sh`，在提示「是否启用 HTTPS（443 端口）」时选 `y`，并确保已放置 `ssl/fullchain.pem` 与 `ssl/privkey.pem`。
 
 ---
 
