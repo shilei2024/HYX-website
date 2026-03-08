@@ -16,9 +16,18 @@ command -v git &> /dev/null || { echo "❌ Git 未安装"; exit 1; }
 echo "✅ 环境检查通过"
 echo ""
 
-# 拉取代码
+# 拉取代码（与远程保持一致，本地修改将被覆盖）
 echo "拉取最新代码..."
-git pull origin main || git pull origin master
+git fetch origin
+if git show-ref -q refs/remotes/origin/main; then
+    git reset --hard origin/main
+elif git show-ref -q refs/remotes/origin/master; then
+    git reset --hard origin/master
+else
+    echo "❌ 未找到远程分支 main 或 master"
+    exit 1
+fi
+echo "✅ 代码已更新"
 echo ""
 
 # 准备文件
