@@ -89,7 +89,7 @@
       const logo = b.logo || '';
       const logoSrc = (logo && logo.startsWith('http')) ? logo : (basePath + logo);
       return `
-        <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
           <div class="card brand-card h-100">
             <div class="brand-logo-wrap">
               <img src="${logoSrc}" class="brand-logo" alt="${name}" onerror="this.style.display='none'; var s=this.nextElementSibling; if(s){ s.style.display='block'; s.classList.remove('d-none'); }">
@@ -124,7 +124,7 @@
       const logo = b.logo || '';
       const logoSrc = (logo && logo.startsWith('http')) ? logo : (basePath + logo);
       return `
-        <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
           <div class="card brand-card h-100">
             <div class="brand-logo-wrap">
               <img src="${logoSrc}" class="brand-logo" alt="${name}" onerror="this.style.display='none'; var s=this.nextElementSibling; if(s){ s.style.display='block'; s.classList.remove('d-none'); }">

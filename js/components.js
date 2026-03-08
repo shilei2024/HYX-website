@@ -332,8 +332,16 @@
     `;
   }
 
+  // 获取当前年份
+  function getCurrentYear() {
+    return new Date().getFullYear();
+  }
+
   // 渲染页脚
   function renderFooter(container, basePath) {
+    var copyrightText = c('footer.copyright') || '';
+    copyrightText = copyrightText.replace(/\d{4}/, getCurrentYear());
+
     container.innerHTML = `
       <div class="container">
         <div class="row">
@@ -368,12 +376,13 @@
           </div>
         </div>
         <div class="footer-bottom text-center">
-          <div class="small">
-            ${c('footer.copyright')}
-            &nbsp;&nbsp;
-            <a href="${c('footer.icpUrl') || 'https://beian.miit.gov.cn/'}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">${c('footer.icp') || getT('footer.icp')}</a>
-            &nbsp;&nbsp;
-            <a href="${c('footer.policeUrl') || 'https://beian.mps.gov.cn/'}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">${c('footer.policeBeiAn') || getT('footer.policeBeiAn')}</a>
+          <div class="small d-flex flex-wrap justify-content-center align-items-center">
+            <span class="me-3">${copyrightText}</span>
+            <a href="${c('footer.icpUrl') || 'https://beian.miit.gov.cn/'}" target="_blank" rel="noopener noreferrer" class="text-decoration-none me-3">${c('footer.icp') || getT('footer.icp')}</a>
+            <a href="${c('footer.policeUrl') || 'https://beian.mps.gov.cn/'}" target="_blank" rel="noopener noreferrer" class="text-decoration-none d-inline-flex align-items-center">
+              <img src="${basePath}assets/police-badge.png" alt="公安备案图标" style="height:16px;width:16px;margin-right:4px;vertical-align:middle;">
+              <span>${c('footer.policeBeiAn') || getT('footer.policeBeiAn')}</span>
+            </a>
           </div>
         </div>
       </div>

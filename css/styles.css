@@ -431,8 +431,8 @@ a:hover {
 }
 
 .brand-card .brand-logo-wrap {
-  height: 120px;
-  padding: 1rem;
+  height: 100px;
+  padding: 0.75rem;
   display: flex;
   align-items: stretch;
   justify-content: center;
@@ -447,6 +447,8 @@ a:hover {
   height: 100%;
   object-fit: contain;
   object-position: center;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 .brand-card .brand-logo-wrap span {
@@ -458,21 +460,21 @@ a:hover {
 }
 
 .brand-card .card-body {
-  padding: 1.25rem;
+  padding: 0.75rem;
 }
 
 .brand-card .card-title {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--gray-900);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .brand-card .card-text {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: var(--gray-600);
-  line-height: 1.5;
-  margin-bottom: 0.75rem;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
 }
 
 .brand-card .brand-link {
