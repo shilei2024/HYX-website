@@ -1,0 +1,19 @@
+[Unit]
+Description=弘易芯科技官网 - Docker Compose Watch
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=/path/to/HYX-website
+ExecStart=/usr/bin/docker-compose watch
+Restart=always
+RestartSec=5
+User=your-username
+Environment="PATH=/usr/bin:/usr/local/bin"
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hyx-watch
+
+[Install]
+WantedBy=multi-user.target

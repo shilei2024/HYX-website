@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 企业官网服务
+  # 企业官网服务（支持 Docker Compose Watch 自动同步）
   hyx-website:
     build:
       context: .
@@ -12,8 +12,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      # 挂载本地配置（可选，便于开发调试）
-      # - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # 挂载网站文件（Watch 模式自动同步）
+      - ./html:/usr/share/nginx/html:rw
       - ./logs:/var/log/nginx
     environment:
       - TZ=Asia/Shanghai
@@ -25,6 +25,20 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    develop:
+      watch:
+        # 静态文件同步模式
+        - path: ./html/
+          action: sync
+          target: /usr/share/nginx/html
+          ignore:
+            - logs/
+            - .git/
+            - node_modules/
+        # Nginx 配置文件同步
+        - path: ./nginx-docker.conf
+          action: sync+restart
+          target: /etc/nginx/conf.d/default.conf
 
   # HTTPS 反向代理（可选，需要配置 SSL 证书）
   # hyx-https:
