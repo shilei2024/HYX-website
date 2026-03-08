@@ -6,7 +6,7 @@ After=docker.service
 [Service]
 Type=simple
 WorkingDirectory=/path/to/HYX-website
-ExecStart=/usr/bin/docker-compose watch
+ExecStart=/usr/bin/docker compose watch
 Restart=always
 RestartSec=5
 User=your-username

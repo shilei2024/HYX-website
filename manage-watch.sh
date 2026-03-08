@@ -7,25 +7,25 @@ cd "$(dirname "$0")"
 case "$ACTION" in
     start)
         echo "启动 Watch 模式..."
-        docker-compose watch
+        docker compose watch
         ;;
     
     start-bg)
         echo "后台启动 Watch 模式..."
-        nohup docker-compose watch > watch.log 2>&1 &
+        nohup docker compose watch > watch.log 2>&1 &
         echo "✅ 已启动 (日志：watch.log)"
         ;;
     
     stop)
         echo "停止 Watch 模式..."
-        pkill -f "docker-compose watch" || true
+        pkill -f "docker compose watch" || true
         echo "✅ 已停止"
         ;;
     
     status)
-        if pgrep -f "docker-compose watch" > /dev/null; then
+        if pgrep -f "docker compose watch" > /dev/null; then
             echo "✅ Watch 模式运行中"
-            pgrep -af "docker-compose watch"
+            pgrep -af "docker compose watch"
             [ -f watch.log ] && tail -n 5 watch.log
         else
             echo "❌ Watch 模式未运行"

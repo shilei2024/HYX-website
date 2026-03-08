@@ -11,7 +11,7 @@ echo ""
 # 检查环境
 echo "检查环境..."
 command -v docker &> /dev/null || { echo "❌ Docker 未安装"; exit 1; }
-command -v docker-compose &> /dev/null || { echo "❌ Docker Compose 未安装"; exit 1; }
+docker compose version &> /dev/null || { echo "❌ Docker Compose 未安装"; exit 1; }
 command -v git &> /dev/null || { echo "❌ Git 未安装"; exit 1; }
 echo "✅ 环境检查通过"
 echo ""
@@ -35,16 +35,16 @@ echo ""
 
 # 部署容器
 echo "停止旧容器..."
-docker-compose down --remove-orphans || true
+docker compose down --remove-orphans || true
 
 echo "构建镜像..."
-docker-compose build --no-cache
+docker compose build --no-cache
 
 echo "启动容器..."
-docker-compose up -d
+docker compose up -d
 
 echo ""
-docker-compose ps
+docker compose ps
 echo ""
 
 # 询问是否启动 Watch
@@ -56,7 +56,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         chmod +x manage-watch.sh
         ./manage-watch.sh start-bg
     else
-        nohup docker-compose watch > watch.log 2>&1 &
+        nohup docker compose watch > watch.log 2>&1 &
         echo "✅ Watch 模式已启动"
     fi
 fi

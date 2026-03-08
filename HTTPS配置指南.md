@@ -104,11 +104,11 @@ systemctl start docker
 systemctl enable docker
 
 # 安装 Docker Compose
-apt install docker-compose -y
+apt install docker-compose-plugin -y
 
 # 验证安装
 docker --version
-docker-compose --version
+docker compose version
 ```
 
 ### 3.2 开放防火墙端口
@@ -159,7 +159,7 @@ scp -r HYX-website/* user@your-server:/var/www/hyx-website/
 cd /var/www/hyx-website
 
 # 使用 HTTP 配置启动
-docker-compose up -d --build
+docker compose up -d --build
 
 # 验证运行状态
 docker ps
@@ -296,10 +296,10 @@ server_name hyic-tech.cn www.hyic-tech.cn;
 cd /var/www/hyx-website
 
 # 停止旧容器
-docker-compose down
+docker compose down
 
 # 使用 HTTPS 配置启动
-docker-compose -f docker-compose-https.yml up -d --build
+docker compose -f docker-compose-https.yml up -d --build
 
 # 查看日志
 docker logs -f hyx-website

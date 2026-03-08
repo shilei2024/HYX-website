@@ -97,13 +97,13 @@ status() {
 # 使用 Docker Compose 部署
 compose_up() {
     log_info "使用 Docker Compose 启动服务..."
-    docker-compose up -d --build
+    docker compose up -d --build
     log_info "服务已启动"
 }
 
 compose_down() {
     log_info "停止 Docker Compose 服务..."
-    docker-compose down
+    docker compose down
     log_info "服务已停止"
 }
 
