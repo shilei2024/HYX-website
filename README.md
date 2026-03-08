@@ -11,6 +11,7 @@
 | **[故障排查.md](故障排查.md)** | 常见问题排查 |
 | **[HTTPS配置指南.md](HTTPS配置指南.md)** | 443/SSL 证书与 Nginx 配置 |
 | `一键部署.sh` | 一键部署（可选启用 HTTPS） |
+| `sync-html.sh` | 拉取代码后同步到 html/，页面才会更新 |
 | `manage-watch.sh` | Watch 模式管理 |
 | `install-service.sh` | systemd 开机自启 |
 
@@ -18,7 +19,7 @@
 
 ```bash
 cd /path/to/HYX-website
-chmod +x 一键部署.sh manage-watch.sh install-service.sh setup-permissions.sh
+chmod +x 一键部署.sh sync-html.sh manage-watch.sh install-service.sh setup-permissions.sh
 ./一键部署.sh
 ```
 
@@ -27,7 +28,7 @@ chmod +x 一键部署.sh manage-watch.sh install-service.sh setup-permissions.sh
 ## 🚀 功能
 
 - 一键部署：HTTP（80）或 HTTPS（80+443）
-- Watch 自动同步：`git pull` 后数秒生效（仅 HTTP 模式）
+- Watch 自动同步：`git pull` 后执行 `./sync-html.sh`，数秒生效（仅 HTTP 模式）
 - 开机自启：可安装 systemd 服务
 
 ---
