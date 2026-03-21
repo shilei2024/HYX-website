@@ -201,9 +201,9 @@ docker stop hyx-website
 
 # 申请证书（替换 your-domain.com）
 certbot certonly --standalone \
-  -d hyic-tech.cn \
-  -d www.hyic-tech.cn \
-  --email bill.zhang@hyic-tech.cn \
+  -d hyic-tech.com \
+  -d www.hyic-tech.com \
+  --email 879886239@qq.com \
   --agree-tos \
   --no-eff-email
 
