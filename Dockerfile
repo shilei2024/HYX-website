@@ -7,8 +7,8 @@ LABEL maintainer="HYIC Technology <bill.zhang@hyic-tech.cn>"
 LABEL description="弘易芯科技企业官网"
 LABEL version="2.0"
 
-# 复制网站文件到 Nginx 目录
-COPY . /usr/share/nginx/html/
+# 复制网站文件到 Nginx 目录（仅 site/ 内的内容，不含部署脚本/文档）
+COPY site/ /usr/share/nginx/html/
 
 # 复制 Nginx 配置文件
 COPY nginx-docker.conf /etc/nginx/conf.d/default.conf

@@ -248,7 +248,7 @@ cp hyic-tech.com.key /var/www/HYX-website/ssl/privkey.pem
 
 ### 6.1 使用项目内的 HTTPS 配置
 
-项目已包含 `docker-compose-https.yml`（根目录），用于 80 + **443** 端口及 SSL 证书。请先完成「步骤四」或执行 `./一键部署.sh` 生成 `html/` 目录，并将证书放入 `ssl/`（见步骤五）。
+项目已包含 `docker-compose-https.yml`（根目录），用于 80 + **443** 端口及 SSL 证书。请先完成「步骤四」或执行 `./一键部署.sh`，并将证书放入 `ssl/`（见步骤五）。
 
 ### 6.2 修改 Nginx HTTPS 配置
 

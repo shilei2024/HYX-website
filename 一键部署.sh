@@ -31,15 +31,11 @@ echo "✅ 代码已更新"
 echo ""
 
 # 准备文件
-if [ ! -d "html" ]; then
-    echo "创建 html 目录..."
-    mkdir -p html
-    echo "复制网站文件..."
-    rsync -av --exclude='html/' --exclude='logs/' --exclude='.git/' --exclude='*.md' --exclude='*.sh' --exclude='docker-compose.yml' --exclude='docker-compose-https.yml' --exclude='Dockerfile' --exclude='.dockerignore' . html/
-    echo "✅ 文件准备完成"
-else
-    echo "ℹ️  html 目录已存在"
+if [ ! -d "site" ]; then
+    echo "❌ site 目录不存在，请确认仓库完整"
+    exit 1
 fi
+echo "✅ 网站目录 site/ 就绪（git pull 后 Watch 自动同步）"
 echo ""
 
 # 部署模式：是否启用 HTTPS（443）
@@ -89,7 +85,7 @@ if [ -z "$USE_HTTPS" ]; then
         fi
     fi
 else
-    echo "ℹ️  HTTPS 模式未启用 Watch，更新内容请重新执行部署或手动同步 html/ 后重启容器。"
+    echo "ℹ️  HTTPS 模式未启用 Watch，更新内容请重新执行部署或手动重启容器。"
 fi
 
 echo ""

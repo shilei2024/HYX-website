@@ -13,7 +13,7 @@ services:
       - "80:80"
     volumes:
       # 挂载网站文件（Watch 模式自动同步）
-      - ./html:/usr/share/nginx/html:rw
+      - ./site:/usr/share/nginx/html:ro
       - ./logs:/var/log/nginx
     environment:
       - TZ=Asia/Shanghai
@@ -27,8 +27,8 @@ services:
       start_period: 10s
     develop:
       watch:
-        # 静态文件同步模式
-        - path: ./html/
+        # 静态文件同步模式（git pull 后自动生效，无需手动 sync）
+        - path: ./site/
           action: sync
           target: /usr/share/nginx/html
           ignore:
