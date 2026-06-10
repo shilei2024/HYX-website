@@ -56,12 +56,12 @@
     },
     {
       "id": 7,
-      "name": "陆海",
-      "nameEn": "Sea&Land",
-      "logo": "assets/brands/陆海.png",
-      "url": "http://www.sealand-pptc.com/",
-      "description": "自恢复保险丝。",
-      "descriptionEn": "PPTC self-recovery fuses."
+      "name": "极海",
+      "nameEn": "Geehy",
+      "logo": "assets/brands/极海.png",
+      "url": "https://www.geehy.com/",
+      "description": "MCU 微控制器。",
+      "descriptionEn": "MCU microcontrollers."
     },
     {
       "id": 8,
