@@ -1,0 +1,73 @@
+{
+  "slides": [
+    {
+      "id": 1,
+      "image": "assets/images/hero-1.jpg",
+      "link": "",
+      "title": {
+        "zh": "授权代理 · 品质保障",
+        "en": "Authorized Distribution · Quality Assurance",
+        "ru": "Авторизованная дистрибуция · Гарантия качества"
+      },
+      "description": {
+        "zh": "弘易芯科技专注电子元器件分销与方案支持，携手多家知名品牌，为制造企业提供稳定可靠的供应链服务。",
+        "en": "HYIC specializes in electronic component distribution and solution support, partnering with top international brands to provide stable and reliable supply chain services for manufacturers.",
+        "ru": "HYIC специализируется на дистрибуции электронных компонентов и технической поддержке, сотрудничая с ведущими международными брендами."
+      }
+    },
+    {
+      "id": 2,
+      "image": "assets/images/hero-2.jpg",
+      "link": "",
+      "title": {
+        "zh": "代理品牌 / 分销品牌",
+        "en": "Complete Coverage of Passive & Active Components",
+        "ru": "Полный ассортимент пассивных и активных компонентов"
+      },
+      "description": {
+        "zh": "二、三极管，MOSFET、ESD、TVS、LDO、DCDC、电源驱动、MCU、FLASH等全品类半导体产品，满足研发与量产需求，助力客户产品快速上市。",
+        "en": "Full range of capacitors, resistors, inductors, ICs and more, meeting R&D and mass production needs, helping customers bring products to market quickly.",
+        "ru": "Полный спектр конденсаторов, резисторов, индукторов, микросхем и других компонентов для НИОКР и серийного производства."
+      }
+    },
+    {
+      "id": 3,
+      "image": "assets/images/hero-3.jpg",
+      "link": "",
+      "title": {
+        "zh": "技术赋能 · 方案中心",
+        "en": "Technical Empowerment · Solution Center",
+        "ru": "Техническая поддержка · Центр решений"
+      },
+      "description": {
+        "zh": "专业FAE团队提供选型、调试与量产支持，从概念到量产全程护航。",
+        "en": "Professional FAE team provides selection, debugging, and mass production support, escorting from concept to mass production.",
+        "ru": "Профессиональная команда FAE обеспечивает поддержку от концепции до серийного производства."
+      }
+    }
+  ],
+  "about": {
+    "image": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80",
+    "link": "about/index.html",
+    "title": {
+      "zh": "关于弘易芯科技",
+      "en": "About HYIC",
+      "ru": "О компании HYIC"
+    },
+    "subtitle": {
+      "zh": "专业、可信赖的电子元器件授权代理商",
+      "en": "Professional and Trusted Electronic Component Authorized Distributor",
+      "ru": "Профессиональный и надежный авторизованный дистрибьютор электронных компонентов"
+    },
+    "text": {
+      "zh": "深圳市弘易芯科技有限公司致力于为电子制造企业提供优质的元器件供应与技术支持。我们拥有完善的授权体系与供应链能力，半导体分离及主动元器件全品类，携手多家知名品牌，为客户提供从选型、小批量试产到大批量供货的一站式服务。",
+      "en": "Shenzhen HYIC Technology Co., Ltd. is dedicated to providing quality component supply and technical support for electronics manufacturers. We have a comprehensive authorization system and supply chain capability, covering passive and active components across all categories, partnering with internationally renowned brands to provide one-stop services from selection, small batch trial production to large volume supply.",
+      "ru": "Shenzhen HYIC Technology Co., Ltd. стремится предоставлять качественные электронные компоненты и техническую поддержку производителям электроники. Мы имеем комплексную систему авторизации и возможности цепочки поставок, охватывающие все категории пассивных и активных компонентов."
+    },
+    "linkText": {
+      "zh": "了解更多",
+      "en": "Learn More",
+      "ru": "Подробнее"
+    }
+  }
+}

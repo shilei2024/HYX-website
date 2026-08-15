@@ -26,8 +26,7 @@
 
   <main class="py-5">
     <div class="container">
-      <ul class="nav nav-pills mb-4" id="news-tabs"></ul>
-      <div id="news-list"></div>
+      <div id="news-list-container"></div>
     </div>
   </main>
 
@@ -37,28 +36,9 @@
   <script src="../../js/components.js"></script>
   <script src="../../js/data-loader.js"></script>
   <script>
-    document.addEventListener('hyx-components-ready', async function() {
-      if (!window.HYXRenderer) return;
-      
-      const urlParams = new URLSearchParams(window.location.search);
-      const currentType = urlParams.get('type') || '';
-      
-      const newsData = await HYXRenderer.loadNews();
-      
-      const tabsContainer = document.getElementById('news-tabs');
-      if (tabsContainer) {
-        HYXRenderer.renderNewsTabs(tabsContainer, newsData.types, currentType);
-      }
-      
-      let news = newsData.news;
-      if (currentType) {
-        news = news.filter(n => n.type === currentType);
-      }
-      
-      const listContainer = document.getElementById('news-list');
-      if (listContainer) {
-        HYXRenderer.renderNewsCards(listContainer, news, '../../');
-      }
+    document.addEventListener('hyx-components-ready', function() {
+      var c = document.getElementById('news-list-container');
+      if (c && window.HYXRenderer) HYXRenderer.renderNewsList(c, null);
     });
   </script>
 </body>
