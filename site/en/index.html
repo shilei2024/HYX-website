@@ -13,47 +13,9 @@
 <body>
   <header class="site-header" id="hyx-header"></header>
 
-  <!-- Banner Carousel -->
+  <!-- Banner Carousel（数据驱动，后台可管理） -->
   <section class="banner-section">
-    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2"></button>
-      </div>
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <div class="container">
-            <div class="carousel-caption">
-              <h2 data-i18n="home.banner1Title">Authorized Distribution · Quality Assurance</h2>
-              <p data-i18n="home.banner1Desc">HYIC specializes in electronic component distribution and solution support, partnering with top international brands to provide stable and reliable supply chain services for manufacturers.</p>
-            </div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="container">
-            <div class="carousel-caption">
-              <h2 data-i18n="home.banner2Title">Complete Coverage of Passive & Active Components</h2>
-              <p data-i18n="home.banner2Desc">Full range of capacitors, resistors, inductors, ICs and more, meeting R&D and mass production needs, helping customers bring products to market quickly.</p>
-            </div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="container">
-            <div class="carousel-caption">
-              <h2 data-i18n="home.banner3Title">Technical Empowerment · Solution Center</h2>
-              <p data-i18n="home.banner3Desc">Professional FAE team provides selection, debugging, and mass production support, escorting from concept to mass production.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-      </button>
-    </div>
+    <div id="hero-carousel"></div>
   </section>
 
   <!-- Quick Entry -->
@@ -108,23 +70,9 @@
     </div>
   </section>
 
-  <!-- About Section -->
+  <!-- About Section（数据驱动，后台可管理） -->
   <section class="intro-section">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-6">
-          <h2 class="section-title" data-i18n="home.aboutTitle">About HYIC</h2>
-          <p class="section-subtitle" data-i18n="home.aboutSubtitle">Professional and Trusted Electronic Component Authorized Distributor</p>
-          <p class="intro-text" data-i18n="home.aboutText">
-            Shenzhen HYIC Technology Co., Ltd. is dedicated to providing quality component supply and technical support for electronics manufacturers. We have a comprehensive authorization system and supply chain capability, covering passive and active components across all categories, partnering with internationally renowned brands to provide one-stop services from selection, small batch trial production to large volume supply. The company focuses on technology investment and customer experience, with the philosophy of "Professional, Efficient, Trusted", helping customers innovate products and enhance market competitiveness.
-          </p>
-          <a href="about/index.html" class="btn btn-hyx-primary" data-i18n="home.learnMore">Learn More</a>
-        </div>
-        <div class="col-lg-6 mt-4 mt-lg-0">
-          <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80" alt="Company Image" class="img-fluid rounded-10 shadow">
-        </div>
-      </div>
-    </div>
+    <div class="container" id="home-about"></div>
   </section>
 
   <!-- News Section -->
@@ -143,10 +91,13 @@
   <script src="../js/data-loader.js"></script>
   <script>
     document.addEventListener('hyx-components-ready', function() {
-      const newsContainer = document.getElementById('home-news-container');
-      if (newsContainer && window.HYXRenderer) {
-        HYXRenderer.renderHomeNews(newsContainer);
-      }
+      if (!window.HYXRenderer) return;
+      var hero = document.getElementById('hero-carousel');
+      if (hero) HYXRenderer.renderHeroCarousel(hero);
+      var about = document.getElementById('home-about');
+      if (about) HYXRenderer.renderHomeAbout(about);
+      var newsContainer = document.getElementById('home-news-container');
+      if (newsContainer) HYXRenderer.renderHomeNews(newsContainer);
     });
   </script>
 </body>

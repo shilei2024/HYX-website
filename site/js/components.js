@@ -86,16 +86,31 @@
     return { zhPath, enPath, ruPath };
   }
 
-  // 加载 JSON 数据
+  // 加载 JSON 数据（禁用缓存，后台修改后前台立即生效）
   async function loadJSON(url) {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { cache: 'no-store' });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return await response.json();
     } catch (error) {
       console.error('Failed to load JSON:', url, error);
       return null;
     }
+  }
+
+  // 深度合并：loaded（后台可编辑的 i18n 文件）覆盖 inline（内置兜底文案）
+  function deepMerge(base, override) {
+    var result = {};
+    Object.keys(base || {}).forEach(function (k) { result[k] = base[k]; });
+    Object.keys(override || {}).forEach(function (k) {
+      var v = override[k];
+      if (v && typeof v === 'object' && !Array.isArray(v) && result[k] && typeof result[k] === 'object' && !Array.isArray(result[k])) {
+        result[k] = deepMerge(result[k], v);
+      } else {
+        result[k] = v;
+      }
+    });
+    return result;
   }
 
   // 多语言文案（内联，不依赖 data/i18n/*.json，避免加载失败导致显示 key）
@@ -147,14 +162,19 @@
     }
   };
 
-  // 初始化数据（仅加载 config，文案用内联 LABELS）
+  // 初始化数据（加载 config；文案以内联 LABELS 兜底，叠加 data/i18n/{lang}.json 后台可编辑部分）
   async function initData() {
     const basePath = getBasePath();
     window.HYXData.basePath = basePath;
     var loadedConfig = await loadJSON(basePath + 'data/config.json');
     HYXData.config = loadedConfig;
     var lang = HYXData.lang || 'zh';
-    HYXData.i18n = LABELS[lang] || LABELS.zh;
+    var merged = LABELS[lang] || LABELS.zh;
+    var loadedI18n = await loadJSON(basePath + 'data/i18n/' + lang + '.json');
+    if (loadedI18n && typeof loadedI18n === 'object') {
+      merged = deepMerge(merged, loadedI18n);
+    }
+    HYXData.i18n = merged;
     return { config: loadedConfig, i18n: HYXData.i18n };
   }
 

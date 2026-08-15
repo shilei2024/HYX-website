@@ -12,10 +12,15 @@
     return window.HYXData?.basePath || './';
   }
 
+  // 统一请求选项：禁用缓存，保证后台修改后前台立即生效
+  function fetchOptions() {
+    return { cache: 'no-store' };
+  }
+
   // 加载产品数据
   async function loadProducts() {
     try {
-      const response = await fetch(getBasePath() + 'data/products.json');
+      const response = await fetch(getBasePath() + 'data/products.json', fetchOptions());
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return await response.json();
     } catch (error) {
@@ -27,7 +32,7 @@
   // 加载代理品牌数据
   async function loadBrands() {
     try {
-      const response = await fetch(getBasePath() + 'data/brands.json');
+      const response = await fetch(getBasePath() + 'data/brands.json', fetchOptions());
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return await response.json();
     } catch (error) {
@@ -39,7 +44,7 @@
   // 加载分销品牌数据
   async function loadDistributionBrands() {
     try {
-      const response = await fetch(getBasePath() + 'data/distribution-brands.json');
+      const response = await fetch(getBasePath() + 'data/distribution-brands.json', fetchOptions());
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return await response.json();
     } catch (error) {
@@ -51,13 +56,104 @@
   // 加载新闻数据
   async function loadNews() {
     try {
-      const response = await fetch(getBasePath() + 'data/news.json');
+      const response = await fetch(getBasePath() + 'data/news.json', fetchOptions());
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return await response.json();
     } catch (error) {
       console.error('Failed to load news:', error);
       return { types: [], news: [] };
     }
+  }
+
+  // 加载首页数据（英雄区轮播 + 关于区块，可在后台管理）
+  async function loadHome() {
+    try {
+      const response = await fetch(getBasePath() + 'data/home.json', fetchOptions());
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      console.error('Failed to load home:', error);
+      return { slides: [], about: null };
+    }
+  }
+
+  // 从 {zh, en, ru} 对象中按当前语言取文案
+  function pickLangText(obj) {
+    if (!obj || typeof obj !== 'object') return '';
+    const lang = window.HYXData && window.HYXData.lang ? window.HYXData.lang : 'zh';
+    return obj[lang] || obj.zh || obj.en || obj.ru || '';
+  }
+
+  // 计算图片地址（相对路径基于站点根）
+  function resolveAssetUrl(url) {
+    if (!url) return '';
+    if (/^(https?:)?\/\//i.test(url) || url.startsWith('data:') || url.startsWith('/')) return url;
+    return getBasePath().replace(/\/?$/, '/') + url.replace(/^\//, '');
+  }
+
+  // 渲染首页英雄区轮播（数据来自 home.json，后台可改图片与文字）
+  async function renderHeroCarousel(container) {
+    const data = await loadHome();
+    const slides = data.slides || [];
+    if (!container) return;
+    if (!slides.length) {
+      container.innerHTML = '<div class="carousel-item active" style="height:420px;background-color:#0d2a4d;"></div>';
+      return;
+    }
+    const indicators = slides.map((s, i) =>
+      `<button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="${i}" ${i === 0 ? 'class="active" aria-current="true"' : ''}></button>`
+    ).join('');
+    const items = slides.map((s, i) => {
+      const bg = resolveAssetUrl(s.image);
+      const link = s.link || '';
+      const title = pickLangText(s.title);
+      const desc = pickLangText(s.description);
+      const caption = `
+        <div class="container">
+          <div class="carousel-caption">
+            ${title ? `<h2>${title}</h2>` : ''}
+            ${desc ? `<p>${desc}</p>` : ''}
+            ${link ? `<a href="${link}" class="btn btn-light mt-2">${t('home.learnMore')}</a>` : ''}
+          </div>
+        </div>`;
+      return `
+        <div class="carousel-item ${i === 0 ? 'active' : ''}" style="background-image:linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.25) 100%)${bg ? `, url('${bg}')` : ''};">
+          ${caption}
+        </div>`;
+    }).join('');
+    container.innerHTML = `
+      <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">${indicators}</div>
+        <div class="carousel-inner">${items}</div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>`;
+  }
+
+  // 渲染首页「关于我们」区块（数据来自 home.json）
+  async function renderHomeAbout(container) {
+    if (!container) return;
+    const data = await loadHome();
+    const about = data.about;
+    if (!about) { container.innerHTML = ''; return; }
+    const img = resolveAssetUrl(about.image);
+    const link = about.link || 'about/index.html';
+    container.innerHTML = `
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <h2 class="section-title">${pickLangText(about.title)}</h2>
+          <p class="section-subtitle">${pickLangText(about.subtitle)}</p>
+          <p class="intro-text">${pickLangText(about.text)}</p>
+          <a href="${link}" class="btn btn-hyx-primary">${pickLangText(about.linkText)}</a>
+        </div>
+        <div class="col-lg-6 mt-4 mt-lg-0">
+          <img src="${img}" alt="${pickLangText(about.title)}" class="img-fluid rounded-10 shadow">
+        </div>
+      </div>`;
   }
 
   function t(key) {
@@ -296,13 +392,75 @@
   async function loadDiagramCategories() {
     try {
       const basePath = getBasePath();
-      const response = await fetch(basePath + 'data/diagram-categories.json');
+      const response = await fetch(basePath + 'data/diagram-categories.json', fetchOptions());
       if (!response.ok) throw new Error('HTTP ' + response.status);
       const data = await response.json();
       return data && data.categories ? data.categories : [];
     } catch (err) {
       console.error('Failed to load diagram categories:', err);
       return [];
+    }
+  }
+
+  // 渲染新闻列表页（typeFilter 为 null 时显示全部；数据来自后台）
+  async function renderNewsList(container, typeFilter) {
+    if (!container) return;
+    const newsData = await loadNews();
+    let list = newsData.news || [];
+    if (typeFilter) list = list.filter(n => n.type === typeFilter);
+    if (!list.length) {
+      container.innerHTML = '<div class="text-muted py-4"><p class="mb-0">' + t('news.placeholder') + '</p></div>';
+      return;
+    }
+    const cards = list.map(item => `
+      <div class="col-md-6 col-lg-4 mb-4">
+        <a href="detail.html?id=${item.id}" class="text-decoration-none text-dark d-block h-100">
+          <div class="card news-card h-100">
+            <img src="${resolveAssetUrl(item.image)}" class="card-img-top" alt="">
+            <div class="card-body">
+              <div class="news-date">${item.date || ''}</div>
+              <h5 class="card-title">${localized(item, 'title')}</h5>
+              ${item.summary ? `<p class="card-text small text-muted">${localized(item, 'summary')}</p>` : ''}
+            </div>
+          </div>
+        </a>
+      </div>
+    `).join('');
+    container.innerHTML = `<div class="row g-4">${cards}</div>`;
+  }
+
+  // 获取地址栏查询参数
+  function getQueryParam(name) {
+    return new URLSearchParams(window.location.search).get(name);
+  }
+
+  // 渲染新闻详情页（根据 ?id= 从后台数据加载）
+  async function renderNewsDetail(metaEl, bodyEl) {
+    if (!metaEl && !bodyEl) return;
+    const newsData = await loadNews();
+    const id = getQueryParam('id');
+    const item = (newsData.news || []).find(n => String(n.id) === String(id));
+    if (!item) {
+      if (metaEl) metaEl.innerHTML = '';
+      if (bodyEl) bodyEl.innerHTML = `
+        <div class="text-muted py-5 text-center">
+          <p class="mb-3">${t('news.placeholder')}</p>
+          <a href="index.html" class="btn btn-hyx-outline">${t('news.backToList')}</a>
+        </div>`;
+      return;
+    }
+    if (metaEl) {
+      const typeName = (newsData.types || []).find(tp => tp.id === item.type);
+      metaEl.innerHTML = `
+        <div class="text-muted small mb-2">${item.date || ''}${typeName ? ' · ' + localized(typeName, 'name') : ''}</div>
+        <h2 class="h4 fw-bold">${localized(item, 'title')}</h2>`;
+    }
+    if (bodyEl) {
+      const img = resolveAssetUrl(item.image);
+      const content = localized(item, 'content') || (item.summary ? localized(item, 'summary') : '');
+      bodyEl.innerHTML = `
+        ${img ? `<img src="${img}" class="img-fluid rounded mb-4" alt="">` : ''}
+        <div class="article-text">${content || ''}</div>`;
     }
   }
 
@@ -360,16 +518,21 @@
     loadBrands,
     loadDistributionBrands,
     loadDiagramCategories,
+    loadHome,
     renderDistributionBrandCards,
     renderProductCards,
     renderBrandCards,
     renderNewsCards,
     renderNewsTabs,
+    renderNewsList,
+    renderNewsDetail,
     renderDiagramPage,
     updateDiagramContent,
     renderContactCards,
     renderLocations,
-    renderHomeNews
+    renderHomeNews,
+    renderHeroCarousel,
+    renderHomeAbout
   };
 
 })();

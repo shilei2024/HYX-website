@@ -13,47 +13,9 @@
 <body>
   <header class="site-header" id="hyx-header"></header>
 
-  <!-- Banner Carousel -->
+  <!-- Banner Carousel（данные из home.json, управляется из админ-панели） -->
   <section class="banner-section">
-    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2"></button>
-      </div>
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <div class="container">
-            <div class="carousel-caption">
-              <h2 data-i18n="home.banner1Title">Авторизованная дистрибуция · Гарантия качества</h2>
-              <p data-i18n="home.banner1Desc">HYIC специализируется на дистрибуции электронных компонентов и технической поддержке, сотрудничая с ведущими международными брендами.</p>
-            </div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="container">
-            <div class="carousel-caption">
-              <h2 data-i18n="home.banner2Title">Полный ассортимент пассивных и активных компонентов</h2>
-              <p data-i18n="home.banner2Desc">Полный спектр конденсаторов, резисторов, индукторов, микросхем и других компонентов для НИОКР и серийного производства.</p>
-            </div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="container">
-            <div class="carousel-caption">
-              <h2 data-i18n="home.banner3Title">Техническая поддержка · Центр решений</h2>
-              <p data-i18n="home.banner3Desc">Профессиональная команда FAE обеспечивает поддержку от концепции до серийного производства.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-      </button>
-    </div>
+    <div id="hero-carousel"></div>
   </section>
 
   <!-- Quick Entry -->
@@ -108,23 +70,9 @@
     </div>
   </section>
 
-  <!-- About Section -->
+  <!-- About Section（данные из home.json, управляется из админ-панели） -->
   <section class="intro-section">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-6">
-          <h2 class="section-title" data-i18n="home.aboutTitle">О компании HYIC</h2>
-          <p class="section-subtitle" data-i18n="home.aboutSubtitle">Профессиональный и надежный авторизованный дистрибьютор электронных компонентов</p>
-          <p class="intro-text" data-i18n="home.aboutText">
-            Shenzhen HYIC Technology Co., Ltd. стремится предоставлять качественные электронные компоненты и техническую поддержку производителям электроники. Мы имеем комплексную систему авторизации и возможности цепочки поставок, охватывающие все категории пассивных и активных компонентов.
-          </p>
-          <a href="about/index.html" class="btn btn-hyx-primary" data-i18n="home.learnMore">Подробнее</a>
-        </div>
-        <div class="col-lg-6 mt-4 mt-lg-0">
-          <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80" alt="Company Image" class="img-fluid rounded-10 shadow">
-        </div>
-      </div>
-    </div>
+    <div class="container" id="home-about"></div>
   </section>
 
   <!-- News Section -->
@@ -143,10 +91,13 @@
   <script src="../js/data-loader.js"></script>
   <script>
     document.addEventListener('hyx-components-ready', function() {
-      const newsContainer = document.getElementById('home-news-container');
-      if (newsContainer && window.HYXRenderer) {
-        HYXRenderer.renderHomeNews(newsContainer);
-      }
+      if (!window.HYXRenderer) return;
+      var hero = document.getElementById('hero-carousel');
+      if (hero) HYXRenderer.renderHeroCarousel(hero);
+      var about = document.getElementById('home-about');
+      if (about) HYXRenderer.renderHomeAbout(about);
+      var newsContainer = document.getElementById('home-news-container');
+      if (newsContainer) HYXRenderer.renderHomeNews(newsContainer);
     });
   </script>
 </body>

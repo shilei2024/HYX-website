@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -14,45 +14,7 @@
   <header class="site-header" id="hyx-header"></header>
 
   <section class="banner-section">
-    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2"></button>
-      </div>
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <div class="container">
-            <div class="carousel-caption">
-              <h2 data-i18n="home.banner1Title">授权代理 · 品质保障</h2>
-              <p data-i18n="home.banner1Desc">弘易芯科技专注电子元器件分销与方案支持，携手多家知名品牌，为制造企业提供稳定可靠的供应链服务。</p>
-            </div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="container">
-            <div class="carousel-caption">
-              <h2 data-i18n="home.banner2Title">代理品牌 / 分销品牌</h2>
-              <p data-i18n="home.banner2Desc">二、三极管，MOSFET、ESD、TVS、LDO、DCDC、电源驱动、MCU、FLASH等全品类半导体产品。</p>
-            </div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="container">
-            <div class="carousel-caption">
-              <h2 data-i18n="home.banner3Title">技术赋能 · 方案中心</h2>
-              <p data-i18n="home.banner3Desc">专业FAE团队提供选型、调试与量产支持，从概念到量产全程护航。</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-      </button>
-    </div>
+    <div id="hero-carousel"></div>
   </section>
 
   <section class="quick-entry">
@@ -107,19 +69,7 @@
   </section>
 
   <section class="intro-section">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-6">
-          <h2 class="section-title" data-i18n="home.aboutTitle">关于弘易芯科技</h2>
-          <p class="section-subtitle" data-i18n="home.aboutSubtitle">专业、可信赖的电子元器件授权代理商</p>
-          <p class="intro-text" data-i18n="home.aboutText">深圳市弘易芯科技有限公司致力于为电子制造企业提供优质的元器件供应与技术支持。我们拥有完善的授权体系与供应链能力，半导体分离及主动元器件全品类，携手多家知名品牌，为客户提供从选型、小批量试产到大批量供货的一站式服务。</p>
-          <a href="about/index.html" class="btn btn-hyx-primary" data-i18n="home.learnMore">了解更多</a>
-        </div>
-        <div class="col-lg-6 mt-4 mt-lg-0">
-          <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80" alt="关于弘易芯" class="img-fluid rounded-10 shadow">
-        </div>
-      </div>
-    </div>
+    <div class="container" id="home-about"></div>
   </section>
 
   <section class="py-5">
@@ -137,10 +87,13 @@
   <script src="js/data-loader.js"></script>
   <script>
     document.addEventListener('hyx-components-ready', function() {
+      if (!window.HYXRenderer) return;
+      var hero = document.getElementById('hero-carousel');
+      if (hero) HYXRenderer.renderHeroCarousel(hero);
+      var about = document.getElementById('home-about');
+      if (about) HYXRenderer.renderHomeAbout(about);
       var newsContainer = document.getElementById('home-news-container');
-      if (newsContainer && window.HYXRenderer) {
-        HYXRenderer.renderHomeNews(newsContainer);
-      }
+      if (newsContainer) HYXRenderer.renderHomeNews(newsContainer);
     });
   </script>
 </body>

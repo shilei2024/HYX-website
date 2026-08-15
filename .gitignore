@@ -31,3 +31,9 @@ temp/
 ssl/
 *.pem
 *.key
+
+# 后台管理服务运行时数据（用户凭据与内容备份）
+server/data/
+server-data/
+site/assets/uploads/
+

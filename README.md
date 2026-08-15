@@ -30,6 +30,25 @@ chmod +x 一键部署.sh manage-watch.sh install-service.sh setup-permissions.sh
 - Watch 自动同步：`git pull` 后数秒自动生效，**无需手动 sync**（仅 HTTP 模式）
 - 开机自启：可安装 systemd 服务
 - 支持 Vercel 部署：见下方「部署到 Vercel」
+- **后台内容管理**：无需改代码，网页后台直接增删改查全站内容
+
+## 🛠️ 后台内容管理
+
+浏览器访问 **`/admin/`**（如 `http://你的域名/admin/`），登录后即可管理全站内容，保存后**前台立即生效**：
+
+| 模块 | 可管理内容 |
+|------|-----------|
+| 轮播图片 / 关于区块 | 首页英雄区图片、各语言文字、关于我们图文 |
+| 新闻管理 / 新闻分类 | 持续新增新闻（分类、日期、封面、中英文正文） |
+| 代理品牌 / 分销品牌 | 品牌 Logo、名称、官网链接、说明 |
+| 产品列表 / 产品分类 / 应用框图 | 产品图文、分类、方案框图 |
+| 站点设置 | 公司信息、联系方式、页脚备案、办公地点 |
+| 多语言文案 | 中/英/俄界面文案（导航、按钮、栏目标题等） |
+
+- **默认账号**：`admin` / `hyx@2026`（环境变量 `ADMIN_USER` / `ADMIN_PASSWORD` 可改初始值，请登录后在「修改密码」中立即更换）
+- **技术实现**：零依赖 Node.js 服务（`server/server.js`）直接读写 `site/data/*.json`，nginx 将 `/api/` 反代至该服务（`hyx-admin` 容器）；每次保存自动备份至 `server-data/backups/`，上传的图片保存在 `site/assets/uploads/`
+- **本地运行**：`node server/server.js`，前台 http://localhost:3000/ ，后台 http://localhost:3000/admin/
+- 注意：Vercel 纯静态部署不含该 Node 服务，后台管理仅在使用 Docker/自有服务器部署时可用
 
 ## ☁️ 部署到 Vercel（可选）
 
