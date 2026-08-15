@@ -49,6 +49,7 @@ chmod +x 一键部署.sh manage-watch.sh install-service.sh setup-permissions.sh
 - **技术实现**：零依赖 Node.js 服务（`server/server.js`）直接读写 `site/data/*.json`，nginx 将 `/api/` 反代至该服务（`hyx-admin` 容器）；每次保存自动备份至 `server-data/backups/`，上传的图片保存在 `site/assets/uploads/`
 - **本地运行**：`node server/server.js`，前台 http://localhost:3000/ ，后台 http://localhost:3000/admin/
 - 注意：Vercel 纯静态部署不含该 Node 服务，后台管理仅在使用 Docker/自有服务器部署时可用
+- **生产部署与日常维护（含备份/恢复、代码更新与服务器内容修改的冲突处理）详见 [生产环境部署与维护指南.md](生产环境部署与维护指南.md)**
 
 ## ☁️ 部署到 Vercel（可选）
 

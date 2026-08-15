@@ -29,6 +29,39 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    depends_on:
+      - hyx-admin
+
+  # 内容管理 API 服务（后台读写 site/data/*.json 与图片上传）
+  # nginx-https.conf 将 /api/ 反代至本服务
+  hyx-admin:
+    image: node:20-alpine
+    container_name: hyx-admin
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+      - PORT=3000
+      - SITE_DIR=/srv/site
+      # 初始管理员账号（仅首次启动生成；之后以 server-data/users.json 为准）
+      - ADMIN_USER=admin
+      - ADMIN_PASSWORD=hyx@2026
+      - SESSION_TTL_HOURS=24
+    volumes:
+      # 站点目录读写（保存 JSON 数据与上传图片）
+      - ./site:/srv/site
+      # 管理服务代码（只读）
+      - ./server:/srv/server:ro
+      # 服务数据持久化（用户文件与内容备份，含后台修改后的密码）
+      - ./server-data:/srv/server/data
+    command: node /srv/server/server.js
+    networks:
+      - hyx-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
 networks:
   hyx-network:

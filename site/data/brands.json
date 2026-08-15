@@ -91,15 +91,6 @@
       "descriptionEn": "Brushed, brushless, stepper motor driver IC."
     },
     {
-      "id": 11,
-      "name": "成绎",
-      "nameEn": "Covale",
-      "logo": "assets/brands/成绎.png",
-      "url": "https://www.covale.cn/",
-      "description": "降压DC-DC，LDO，负载开关，信号开关，电平转换IC，E-MARK，Type-C，PD控制器，诱骗IC。",
-      "descriptionEn": "Buck DC-DC, LDO, load switch, signal switch, level translator, E-MARK, Type-C, PD controller."
-    },
-    {
       "id": 12,
       "name": "东沅",
       "nameEn": "Dongyuan",
