@@ -245,6 +245,12 @@
   function renderHeader(container, basePath) {
     const langLinks = getLangLinks(basePath);
     const currentLang = getCurrentLang();
+    const accessibilityLabels = {
+      zh: { skip: '跳到主要内容', nav: '主导航', menu: '打开或关闭导航菜单' },
+      en: { skip: 'Skip to main content', nav: 'Primary navigation', menu: 'Open or close navigation menu' },
+      ru: { skip: 'Перейти к основному содержанию', nav: 'Основная навигация', menu: 'Открыть или закрыть меню' }
+    };
+    const a11y = accessibilityLabels[currentLang] || accessibilityLabels.zh;
     const basePathForLang = getBasePath();
     const basePathForAssets = getBasePath();
 
@@ -317,20 +323,21 @@
     });
 
     container.innerHTML = `
-      <nav class="navbar navbar-expand-lg navbar-light navbar-hyx">
+      <a class="skip-link" href="#main-content">${a11y.skip}</a>
+      <nav class="navbar navbar-expand-lg navbar-light navbar-hyx" aria-label="${a11y.nav}">
         <div class="container">
           <a class="navbar-brand" href="${basePath}index.html">
-            <img src="${basePathForAssets}${logoSrc}" alt="${siteName}" onerror="this.style.display='none'">
+            <img src="${basePathForAssets}${logoSrc}" alt="${siteName}" decoding="async" onerror="this.style.display='none'">
             <span>${siteName}</span>
           </a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="${a11y.menu}">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarMain">
             <ul class="navbar-nav me-auto">${dropdownHTML}</ul>
-            <div class="d-flex align-items-center">
+            <div class="header-actions d-flex align-items-center">
               <div class="dropdown lang-dropdown me-3">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 80px;">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   ${currentLang === 'zh' ? getT('common.langZh') : currentLang === 'en' ? 'EN' : 'RU'}
                 </button>
                 <ul class="dropdown-menu">
@@ -342,7 +349,7 @@
               <form class="d-flex search-box-header" id="header-search-form" role="search">
                 <input class="form-control" type="search" placeholder="${getT('common.search')}" aria-label="${getT('common.search')}">
                 <button class="btn btn-primary ms-2 btn-search-icon" type="submit" aria-label="${getT('common.search')}">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                 </button>
               </form>
             </div>
@@ -424,9 +431,34 @@
     });
   }
 
+  // 小屏导航：选择页面后自动收起，并支持 Escape 快速关闭。
+  function bindResponsiveHeader() {
+    var collapseEl = document.getElementById('navbarMain');
+    if (!collapseEl || !window.bootstrap || !window.bootstrap.Collapse) return;
+
+    collapseEl.addEventListener('click', function (event) {
+      var link = event.target.closest('a');
+      if (!link || link.classList.contains('dropdown-toggle') || window.innerWidth >= 992) return;
+      window.bootstrap.Collapse.getOrCreateInstance(collapseEl, { toggle: false }).hide();
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape' || !collapseEl.classList.contains('show')) return;
+      window.bootstrap.Collapse.getOrCreateInstance(collapseEl, { toggle: false }).hide();
+      var toggle = document.querySelector('.navbar-toggler');
+      if (toggle) toggle.focus();
+    });
+  }
+
   // 初始化组件
   async function initComponents() {
     await initData();
+
+    var main = document.querySelector('main') || document.querySelector('.banner-section');
+    if (main && !main.id) {
+      main.id = 'main-content';
+      main.setAttribute('tabindex', '-1');
+    }
 
     const header = document.getElementById('hyx-header');
     const footer = document.getElementById('hyx-footer');
@@ -436,6 +468,7 @@
     if (header) {
       renderHeader(header, navBase);
       bindHeaderSearch(navBase);
+      bindResponsiveHeader();
     }
 
     if (footer) {

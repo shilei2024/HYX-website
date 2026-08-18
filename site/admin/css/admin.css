@@ -9,6 +9,14 @@
 
 body { background: var(--admin-body-bg); }
 
+button,
+a,
+input,
+select,
+textarea { touch-action: manipulation; }
+
+:focus-visible { outline: 3px solid rgba(79, 156, 249, 0.55); outline-offset: 2px; }
+
 /* ---------- 登录页 ---------- */
 .login-wrap {
   min-height: 100vh;
@@ -64,8 +72,35 @@ body { background: var(--admin-body-bg); }
 }
 .admin-main { flex: 1; padding: 24px; min-width: 0; }
 @media (max-width: 767.98px) {
-  .sidebar { position: fixed; top: 56px; bottom: 0; left: -240px; z-index: 1029; transition: left .2s; }
+  .sidebar { position: fixed; top: 56px; bottom: 0; left: -240px; z-index: 1029; overflow-y: auto; overscroll-behavior: contain; box-shadow: 12px 0 30px rgba(15,31,51,.16); transition: left .2s; }
   .sidebar.show { left: 0; }
+  .admin-main { width: 100%; padding: 18px 14px 32px; }
+  .sidebar .nav-link { min-height: 44px; display: flex; align-items: center; }
+  .topbar { padding: 0 12px; }
+  .topbar .brand { min-width: 0; }
+  .topbar .brand span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .topbar > .d-flex { gap: 8px !important; }
+  .topbar > .d-flex > a,
+  #current-username { display: none; }
+  .page-title { font-size: 1.1rem; }
+  .card-body { padding: 1rem; }
+  .modal-dialog { margin: .75rem; }
+  .modal-footer { flex-wrap: nowrap; }
+  .modal-footer .btn { flex: 1; min-height: 44px; }
+  .lang-row { align-items: stretch; }
+  .lang-row .form-control,
+  .lang-row .form-select { min-width: 0; }
+  #toast-wrap { top: 64px; right: 12px; left: 12px; }
+  .admin-toast { width: 100%; min-width: 0; }
+}
+
+@media (max-width: 399.98px) {
+  .topbar .brand img { display: none; }
+  .login-card .card-body { padding: 1.25rem !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
 
 /* ---------- 通用 ---------- */

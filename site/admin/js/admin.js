@@ -973,6 +973,7 @@
       a.classList.toggle('active', a.getAttribute('data-page') === hash);
     });
     document.getElementById('sidebar').classList.remove('show');
+    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', 'false');
 
     // 清理 config 页挂载的回调
     if (hash !== 'config') window._afterEditorSave = null;
@@ -999,7 +1000,17 @@
     document.getElementById('editor-save').addEventListener('click', saveEditor);
     document.getElementById('logout-btn').addEventListener('click', function () { logout(true); });
     document.getElementById('sidebar-toggle').addEventListener('click', function () {
-      document.getElementById('sidebar').classList.toggle('show');
+      var sidebar = document.getElementById('sidebar');
+      var isOpen = sidebar.classList.toggle('show');
+      this.setAttribute('aria-expanded', String(isOpen));
+    });
+    document.addEventListener('keydown', function (event) {
+      var sidebar = document.getElementById('sidebar');
+      if (event.key !== 'Escape' || !sidebar.classList.contains('show')) return;
+      sidebar.classList.remove('show');
+      var toggle = document.getElementById('sidebar-toggle');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.focus();
     });
     window.addEventListener('hashchange', route);
 
