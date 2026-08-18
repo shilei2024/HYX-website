@@ -19,6 +19,10 @@
   --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.12);
   --transition: 0.25s ease;
+  --content-max: 1200px;
+  --page-gutter: clamp(1rem, 3vw, 2rem);
+  --section-space: clamp(3rem, 7vw, 5.5rem);
+  --radius-lg: 16px;
 }
 
 * {
@@ -30,6 +34,55 @@ body {
   color: var(--gray-800);
   line-height: 1.6;
   overflow-x: hidden;
+  min-width: 320px;
+  background: var(--white);
+}
+
+img,
+video,
+canvas,
+iframe {
+  max-width: 100%;
+}
+
+.container {
+  max-width: var(--content-max);
+  padding-left: var(--page-gutter);
+  padding-right: var(--page-gutter);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(0, 160, 233, 0.45);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 2000;
+  padding: 0.65rem 1rem;
+  color: var(--white);
+  background: var(--primary-dark);
+  border-radius: 8px;
+  transform: translateY(-160%);
+  transition: transform var(--transition);
+}
+
+.skip-link:focus {
+  color: var(--white);
+  transform: translateY(0);
 }
 
 a {
@@ -64,7 +117,8 @@ a:hover {
 }
 
 .navbar-hyx .navbar-brand img {
-  height: 60px;
+  width: auto;
+  height: clamp(44px, 5vw, 60px);
   margin-right: 12px;
 }
 
@@ -137,6 +191,10 @@ a:hover {
   width: 100%;
 }
 
+.header-actions {
+  gap: 0.75rem;
+}
+
 .search-box-header .form-control:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(10, 77, 140, 0.15);
@@ -164,7 +222,7 @@ a:hover {
 }
 
 .banner-section .carousel-item {
-  height: 420px;
+  height: clamp(360px, 42vw, 520px);
   background-color: var(--primary-dark);
   background-size: cover;
   background-position: center;
@@ -208,14 +266,14 @@ a:hover {
 }
 
 .banner-section .carousel-caption h2 {
-  font-size: 2rem;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
   font-weight: 700;
   margin-bottom: 0.75rem;
   text-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .banner-section .carousel-caption p {
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
   opacity: 0.95;
   max-width: 560px;
 }
@@ -240,7 +298,7 @@ a:hover {
 
 .quick-entry .card {
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
   transition: transform var(--transition), box-shadow var(--transition);
   height: 100%;
@@ -282,7 +340,7 @@ a:hover {
 
 /* ========== 通用区块标题 ========== */
 .section-title {
-  font-size: 1.75rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
   color: var(--gray-900);
   margin-bottom: 0.5rem;
@@ -306,7 +364,7 @@ a:hover {
 
 /* ========== 公司简介模块 ========== */
 .intro-section {
-  padding: 4rem 0;
+  padding: var(--section-space) 0;
   background: var(--gray-100);
 }
 
@@ -620,7 +678,7 @@ a:hover {
 /* 主标题 - 清晰层级与品牌感 */
 .page-hero h1 {
   font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
-  font-size: 1.875rem;
+  font-size: clamp(1.55rem, 4vw, 2.25rem);
   font-weight: 700;
   letter-spacing: 0.03em;
   line-height: 1.3;
@@ -708,8 +766,8 @@ a:hover {
 .site-footer {
   background: var(--gray-900);
   color: rgba(255,255,255,0.85);
-  padding: 3rem 0 1.5rem;
-  margin-top: 4rem;
+  padding: clamp(2.5rem, 6vw, 4rem) 0 1.5rem;
+  margin-top: clamp(3rem, 7vw, 5rem);
 }
 
 .site-footer a {
@@ -795,8 +853,84 @@ a:hover {
 
 /* ========== 响应式 ========== */
 @media (max-width: 991.98px) {
+  .navbar-hyx {
+    padding: 0.35rem 0;
+  }
+
+  .navbar-hyx .navbar-brand {
+    min-width: 0;
+    max-width: calc(100% - 60px);
+    font-size: 1.05rem;
+  }
+
+  .navbar-hyx .navbar-brand span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .navbar-hyx .navbar-toggler {
+    width: 46px;
+    height: 44px;
+    padding: 0.4rem;
+    border-color: var(--gray-300);
+  }
+
+  .navbar-hyx .navbar-collapse {
+    max-height: calc(100dvh - 72px);
+    margin: 0.35rem calc(var(--page-gutter) * -0.45) 0;
+    padding: 0.75rem calc(var(--page-gutter) * 0.45) 1rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-top: 1px solid var(--gray-100);
+    background: var(--white);
+  }
+
+  .navbar-hyx .nav-link,
+  .navbar-hyx .dropdown-item {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-hyx .dropdown-menu {
+    position: static;
+    margin: 0 0 0.5rem 0.75rem;
+    padding: 0.25rem;
+    box-shadow: none;
+    border-left: 2px solid rgba(10, 77, 140, 0.14);
+  }
+
+  .header-actions {
+    align-items: stretch !important;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+  }
+
+  .header-actions .lang-dropdown,
+  .header-actions .lang-dropdown .btn,
+  .search-box-header {
+    width: 100%;
+    max-width: none;
+  }
+
+  .header-actions .lang-dropdown {
+    margin-right: 0 !important;
+  }
+
+  .header-actions .lang-dropdown .btn {
+    min-height: 44px;
+    text-align: left;
+  }
+
+  .search-box-header .form-control {
+    min-width: 0;
+    min-height: 44px;
+  }
+
   .banner-section .carousel-item {
-    height: 320px;
+    height: clamp(330px, 52vw, 420px);
   }
 
   .banner-section .carousel-caption h2 {
@@ -808,22 +942,158 @@ a:hover {
     margin-bottom: 1.5rem;
   }
 
+  .diagram-sidebar,
+  .product-sidebar .list-group {
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.25rem 0 0.75rem;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+
+  .diagram-sidebar .list-group-item,
+  .product-sidebar .list-group-item {
+    flex: 0 0 auto;
+    min-height: 44px;
+    margin: 0;
+    border: 1px solid var(--gray-300);
+    border-radius: 999px;
+    scroll-snap-align: start;
+  }
+
+  .diagram-sidebar .list-group-item:hover,
+  .diagram-sidebar .list-group-item.active,
+  .product-sidebar .list-group-item:hover,
+  .product-sidebar .list-group-item.active {
+    border-color: var(--primary);
+  }
+
   .navbar-hyx .dropdown-menu {
     margin-top: 0.25rem;
   }
 }
 
 @media (max-width: 767.98px) {
+  main.py-5,
+  .content-section.py-5,
+  section.py-5 {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+
   .banner-section .carousel-item {
-    height: 280px;
+    height: clamp(320px, 95vw, 390px);
+  }
+
+  .banner-section .carousel-caption {
+    width: calc(100% - 2rem);
+    padding: 2.25rem 0 3rem;
+  }
+
+  .banner-section .carousel-caption p {
+    max-width: 32rem;
+    margin-bottom: 0;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 38px;
+  }
+
+  .quick-entry {
+    margin-top: -26px;
+  }
+
+  .quick-entry .row {
+    --bs-gutter-x: 0.75rem;
+    --bs-gutter-y: 0.75rem;
+  }
+
+  .quick-entry .row > [class*="col-"] {
+    width: 50%;
   }
 
   .quick-entry .card-body {
-    padding: 1.25rem;
+    padding: 1rem;
+  }
+
+  .quick-entry .card-icon {
+    width: 46px;
+    height: 46px;
+    margin-bottom: 0.75rem;
+  }
+
+  .quick-entry .card-title {
+    font-size: 0.95rem;
+  }
+
+  .quick-entry .card-text {
+    margin-bottom: 0;
+    font-size: 0.8rem;
   }
 
   .section-title {
     font-size: 1.5rem;
+  }
+
+  .news-card .card-img-top,
+  .product-card .card-img-top {
+    height: clamp(170px, 50vw, 240px);
+  }
+
+  .contact-card {
+    padding: 1.25rem;
+  }
+
+  .btn-hyx-primary,
+  .btn-hyx-outline,
+  form button[type="submit"] {
+    min-height: 46px;
+  }
+
+  table.table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table.table th,
+  table.table td {
+    min-width: 8rem;
+  }
+
+  .site-footer {
+    text-align: left;
+  }
+
+  .site-footer .footer-bottom .small {
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 0.65rem;
+    text-align: left;
+  }
+
+  .site-footer .footer-bottom .small > * {
+    margin-right: 0 !important;
+  }
+}
+
+@media (max-width: 399.98px) {
+  .quick-entry .row > [class*="col-"] {
+    width: 100%;
+  }
+
+  .navbar-hyx .navbar-brand span {
+    max-width: 11rem;
+  }
+
+  .page-hero .breadcrumb {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    white-space: nowrap;
   }
 }
 
@@ -861,5 +1131,25 @@ a:hover {
   .page-hero p.mb-0.opacity-90,
   .page-hero .page-hero-desc {
     font-size: 0.875rem;
+  }
+}
+
+@media (hover: none) {
+  .quick-entry .card:hover,
+  .product-card:hover,
+  .brand-card:hover,
+  .btn-hyx-primary:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
