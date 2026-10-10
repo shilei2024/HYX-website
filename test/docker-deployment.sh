@@ -34,7 +34,17 @@ EOF
 elif [ "$MODE" != http ]; then
   echo "未知测试模式：$MODE"; exit 1
 fi
-cleanup() { "${COMPOSE[@]}" logs --tail 80; "${COMPOSE[@]}" down; }
+cleanup() {
+  local result=$?
+  if [ "$result" -ne 0 ]; then
+    for container in $("${COMPOSE[@]}" ps -aq); do
+      docker inspect --format '{{.Name}} {{json .State.Health}}' "$container" || true
+    done
+  fi
+  "${COMPOSE[@]}" logs --tail 80 || true
+  "${COMPOSE[@]}" down || true
+  exit "$result"
+}
 trap cleanup EXIT
 
 "${COMPOSE[@]}" config --quiet
