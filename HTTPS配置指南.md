@@ -151,11 +151,13 @@ scp -r HYX-website/* user@your-server:/var/www/hyx-website/
 
 ### 4.2 启动 HTTP 版本
 
+首次部署先复制 `.env.example` 为 `.env`（不要覆盖已有配置），设置仓库外的数据/备份路径，并将 `ADMIN_PASSWORD` 换成至少 12 位的正式密码；已有账号升级需按 [腾讯云HTTPS升级步骤.md](腾讯云HTTPS升级步骤.md) 迁移。新版使用 Node 24 LTS，并随 Compose 启动每日备份。
+
 ```bash
 cd /var/www/hyx-website
 
 # 使用 HTTP 配置启动
-docker compose up -d --build
+docker compose up -d --build --force-recreate --wait --wait-timeout 180
 
 # 验证运行状态
 docker ps
@@ -269,7 +271,7 @@ docker compose down
 docker compose -f docker-compose-https.yml down 2>/dev/null || true
 
 # 使用 HTTPS 配置启动（80 + 443）
-docker compose -f docker-compose-https.yml up -d --build
+docker compose -f docker-compose-https.yml up -d --build --force-recreate --wait --wait-timeout 180
 
 # 查看状态与日志
 docker compose -f docker-compose-https.yml ps
@@ -704,7 +706,7 @@ docker restart hyx-website
 # 如果还不行，重新构建容器
 cd /var/www/HYX-website
 docker compose -f docker-compose-https.yml down
-docker compose -f docker-compose-https.yml up -d --build
+docker compose -f docker-compose-https.yml up -d --build --force-recreate --wait --wait-timeout 180
 ```
 
 #### 问题 4：证书申请次数限制

@@ -23,3 +23,9 @@ node_modules/
 *.tmp
 *.swp
 *.bak
+
+# 后台运行时数据与服务器配置不能打进网站镜像
+.env
+server-data/
+server/data/
+site/assets/uploads/

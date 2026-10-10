@@ -1,6 +1,6 @@
 # 弘易芯科技官网
 
-企业官网静态站，支持 Docker 部署、Watch 自动同步与 **HTTPS（443）**。
+企业官网，支持 Docker 部署、独立运营数据、每日自动备份与 **HTTPS（443）**。
 
 ## 📁 文档与脚本
 
@@ -11,24 +11,33 @@
 | **[故障排查.md](故障排查.md)** | 常见问题排查 |
 | **[HTTPS配置指南.md](HTTPS配置指南.md)** | 443/SSL 证书与 Nginx 配置 |
 | `一键部署.sh` | 一键部署（可选启用 HTTPS） |
-| `manage-watch.sh` | Watch 模式管理 |
-| `install-service.sh` | systemd 开机自启 |
+| `server/storage.js` | 首次启动迁移运营数据、图片与账号 |
+| `server/backup.js` | 全量备份及每日定时任务 |
+| `.env.example` | 持久化路径、备份时间和保留天数配置 |
+| `install-service.sh` | 启用 Docker 开机启动、停用旧 Watch |
 
 ## 🎯 快速开始
 
 ```bash
 cd /path/to/HYX-website
+cp -n .env.example .env
+# 编辑 .env：首次生产部署设置至少 12 位的 ADMIN_PASSWORD，替换示例占位值。
 chmod +x 一键部署.sh manage-watch.sh install-service.sh setup-permissions.sh
 ./一键部署.sh
 ```
 
-按提示选择是否启用 **HTTPS（443）**；启用前需将证书放入 `ssl/` 并修改 `nginx-https.conf` 域名，详见 [HTTPS配置指南.md](HTTPS配置指南.md)。手动部署见 [部署指南.md](部署指南.md)。
+按提示选择是否启用 **HTTPS（443）**；启用前需将证书放入 `ssl/` 并修改 `nginx-https.conf` 域名，详见 [HTTPS配置指南.md](HTTPS配置指南.md)。部署脚本使用当前工作区代码，不会强制覆盖本地内容。
+
+默认把运营内容存入仓库旁的 `../hyx-website-data/`，备份存入 `../hyx-website-backups/`。可复制 `.env.example` 为 `.env`，改成服务器上的绝对路径。`docker compose up -d --build` 会启动官网、后台和 `hyx-backup` 定时服务：每日北京时间 **03:00** 全量备份，保留 **30 天**。迁移、恢复和运维步骤见 [生产环境部署与维护指南.md](生产环境部署与维护指南.md)。
 
 ## 🚀 功能
 
 - 一键部署：HTTP（80）或 HTTPS（80+443）
-- Watch 自动同步：`git pull` 后数秒自动生效，**无需手动 sync**（仅 HTTP 模式）
-- 开机自启：可安装 systemd 服务
+- 静态代码与运营目录直接挂载：后台保存后前台刷新生效，无需 Watch
+- 代码和数据分离：首次启动自动迁移旧内容，之后更新代码不会覆盖运营数据
+- 每日备份：JSON、上传图片、后台账号及内容历史全部打包
+- 后台和备份使用 Node 24 LTS 容器
+- 开机自启：启用 Docker 系统服务，容器自动重启
 - 支持 Vercel 部署：见下方「部署到 Vercel」
 - **后台内容管理**：无需改代码，网页后台直接增删改查全站内容
 
@@ -45,11 +54,13 @@ chmod +x 一键部署.sh manage-watch.sh install-service.sh setup-permissions.sh
 | 站点设置 | 公司信息、联系方式、页脚备案、办公地点 |
 | 多语言文案 | 中/英/俄界面文案（导航、按钮、栏目标题等） |
 
-- **默认账号**：`admin` / `hyx@2026`（环境变量 `ADMIN_USER` / `ADMIN_PASSWORD` 可改初始值，请登录后在「修改密码」中立即更换）
-- **技术实现**：零依赖 Node.js 服务（`server/server.js`）直接读写 `site/data/*.json`，nginx 将 `/api/` 反代至该服务（`hyx-admin` 容器）；每次保存自动备份至 `server-data/backups/`，上传的图片保存在 `site/assets/uploads/`
+- **本地开发默认账号**：`admin` / `hyx@2026`。Docker 首次生产部署必须在 `.env` 配置至少 12 位的 `ADMIN_PASSWORD`；已有账号迁移后仍使用原密码，上线前应更换开发默认密码。
+- **技术实现**：零依赖 Node.js 服务（`server/server.js`）读写 `HYX_DATA_DIR/content/`，图片保存至 `HYX_DATA_DIR/uploads/`，账号及保存前的历史快照保存在 `HYX_DATA_DIR/server-data/`；访问 URL 仍为 `/data/` 和 `/assets/uploads/`
 - **本地运行**：`node server/server.js`，前台 http://localhost:3000/ ，后台 http://localhost:3000/admin/
 - 注意：Vercel 纯静态部署不含该 Node 服务，后台管理仅在使用 Docker/自有服务器部署时可用
-- **生产部署与日常维护（含备份/恢复、代码更新与服务器内容修改的冲突处理）详见 [生产环境部署与维护指南.md](生产环境部署与维护指南.md)**
+- **在线留言**：需要在后台站点设置中填写有效的 Formspree 表单 ID；未配置时三种语言均提示电话或邮箱联系，仅发送成功后跳转成功页。
+- **本地手动备份**：`node server/backup.js`；单独运行定时任务：`node server/backup.js --schedule`。直接用 Node 运行时可通过环境变量指定目录，或使用 `node --env-file=.env ...`（Node 20.6+）加载配置。
+- **生产部署与日常维护（含迁移、备份/恢复、代码更新）详见 [生产环境部署与维护指南.md](生产环境部署与维护指南.md)**
 
 ## ☁️ 部署到 Vercel（可选）
 
@@ -75,4 +86,4 @@ chmod +x 一键部署.sh manage-watch.sh install-service.sh setup-permissions.sh
 
 ---
 
-**最后更新**：2025 年
+**最后更新**：2026-10-10

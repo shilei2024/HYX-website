@@ -1,15 +1,15 @@
 /**
  * 弘易芯科技官网 - 后台管理 API 服务
- * 零依赖（仅使用 Node.js 内置模块），直接读写 site/data/*.json 实现内容管理
+ * 零依赖（仅使用 Node.js 内置模块），运营内容存储在代码仓库外
  *
  * 功能：
  *  - 登录认证（Bearer Token，内存会话 + 可持久化的用户文件）
  *  - 内容集合的读取/保存（白名单校验、自动备份、原子写入）
- *  - 图片上传（Base64 JSON 方式，保存至 site/assets/uploads/）
+ *  - 图片上传（Base64 JSON 方式，独立持久化，URL 仍为 assets/uploads/）
  *  - 静态文件服务（本地开发时可一条命令同时运行前台与后台）
  *
  * 启动：node server/server.js
- * 环境变量：PORT / SITE_DIR / ADMIN_USER / ADMIN_PASSWORD / SESSION_TTL_HOURS / UPLOAD_MAX_MB
+ * 环境变量：PORT / SITE_DIR / HYX_DATA_DIR / ADMIN_USER / ADMIN_PASSWORD / SESSION_TTL_HOURS / UPLOAD_MAX_MB
  */
 
 'use strict';
@@ -18,13 +18,17 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const net = require('net');
+const storage = require('./storage').initializeStorage();
 
 // ==================== 基础配置 ====================
 
 /** 服务端口 */
 const PORT = parseInt(process.env.PORT || '3000', 10);
 /** 站点目录（默认为 server 目录旁的 site/） */
-const SITE_DIR = path.resolve(__dirname, process.env.SITE_DIR || path.join('..', 'site'));
+const SITE_DIR = storage.siteDir;
+const CONTENT_DIR = storage.contentDir;
+const UPLOADS_DIR = storage.uploadsDir;
 /** 初始管理员账号（仅首次生成用户文件时使用） */
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 /** 初始管理员密码（仅首次生成用户文件时使用） */
@@ -37,7 +41,7 @@ const UPLOAD_MAX_MB = parseFloat(process.env.UPLOAD_MAX_MB || '5');
 const BODY_LIMIT = Math.ceil(UPLOAD_MAX_MB * 1024 * 1024 * 1.4) + 1024;
 
 /** 服务端数据目录（用户文件、内容备份，位于站点目录之外避免被公开访问） */
-const SERVER_DATA_DIR = path.resolve(__dirname, 'data');
+const SERVER_DATA_DIR = storage.serverDataDir;
 /** 用户信息文件 */
 const USERS_FILE = path.join(SERVER_DATA_DIR, 'users.json');
 /** 内容备份目录 */
@@ -109,10 +113,15 @@ function readJSONFile(file) {
  * @param {string} file - 目标文件路径
  * @param {string} content - 写入内容
  */
-function atomicWrite(file, content) {
+function atomicWrite(file, content, mode = 0o644) {
   const tmp = file + '.tmp-' + randomHex(4);
-  fs.writeFileSync(tmp, content, 'utf8');
-  fs.renameSync(tmp, file);
+  try {
+    fs.writeFileSync(tmp, content, { encoding: 'utf8', mode });
+    fs.renameSync(tmp, file);
+  } catch (error) {
+    if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
+    throw error;
+  }
 }
 
 /**
@@ -164,7 +173,13 @@ const sessions = new Map();
  */
 function loadUsers() {
   let users = readJSONFile(USERS_FILE);
+  if (fs.existsSync(USERS_FILE) && (!users || !users.username || !users.salt || !users.hash)) {
+    throw new Error('账号文件无效，请恢复 users.json；不会重置为默认账号');
+  }
   if (!users || !users.username || !users.hash) {
+    if (process.env.NODE_ENV === 'production' && (ADMIN_PASSWORD.length < 12 || ['hyx@2026', 'replace-with-strong-password'].includes(ADMIN_PASSWORD))) {
+      throw new Error('首次生产部署必须配置至少 12 位的 ADMIN_PASSWORD');
+    }
     const salt = randomHex(16);
     users = {
       username: ADMIN_USER,
@@ -172,12 +187,8 @@ function loadUsers() {
       hash: hashPassword(ADMIN_PASSWORD, salt),
       createdAt: new Date().toISOString()
     };
-    try {
-      ensureDir(SERVER_DATA_DIR);
-      atomicWrite(USERS_FILE, JSON.stringify(users, null, 2));
-    } catch (e) {
-      console.warn('[admin] 无法持久化用户文件（可能为只读挂载），将仅使用内存中的账号:', e.message);
-    }
+    ensureDir(SERVER_DATA_DIR);
+    atomicWrite(USERS_FILE, JSON.stringify(users, null, 2), 0o600);
   }
   return users;
 }
@@ -186,17 +197,13 @@ function loadUsers() {
 let currentUser = loadUsers();
 
 /**
- * 保存用户信息到文件（尽力而为）
+ * 先持久化成功，再更新当前用户；失败必须向调用方报告。
  * @param {Object} users - 用户对象
  */
 function saveUsers(users) {
+  ensureDir(SERVER_DATA_DIR);
+  atomicWrite(USERS_FILE, JSON.stringify(users, null, 2), 0o600);
   currentUser = users;
-  try {
-    ensureDir(SERVER_DATA_DIR);
-    atomicWrite(USERS_FILE, JSON.stringify(users, null, 2));
-  } catch (e) {
-    console.warn('[admin] 用户文件保存失败（只读环境下改动重启后失效）:', e.message);
-  }
 }
 
 /**
@@ -270,14 +277,14 @@ function recordLoginFailure(ip) {
 // ==================== 集合读写与备份 ====================
 
 /**
- * 获取集合对应站点内文件的绝对路径
+ * 获取独立运营目录中集合文件的绝对路径
  * @param {string} name - 集合名
  * @returns {string|null}
  */
 function collectionPath(name) {
   const meta = COLLECTIONS[name];
   if (!meta) return null;
-  return path.join(SITE_DIR, meta.file);
+  return path.join(CONTENT_DIR, meta.file.replace(/^data\//, ''));
 }
 
 /**
@@ -306,7 +313,7 @@ function backupCollection(name) {
 // ==================== 图片上传 ====================
 
 /**
- * 处理图片上传（Base64 JSON），保存到 site/assets/uploads/YYYYMM/
+ * 处理图片上传（Base64 JSON），保存到持久化 uploads/YYYYMM/
  * @param {Object} body - { filename, contentBase64 }
  * @returns {{ok:boolean, url?:string, error?:string}}
  */
@@ -331,11 +338,11 @@ function handleUpload(body) {
   // SVG 属于文本，追加合法性粗检防止存入脚本
   if (ext === '.svg') {
     const text = buffer.toString('utf8');
-    if (/<script[\s>]/i.test(text)) return { ok: false, error: 'SVG 内含脚本，禁止上传' };
+    if (/<(?:script|foreignObject)[\s>]|\bon\w+\s*=|javascript\s*:|<!\s*(?:DOCTYPE|ENTITY)/i.test(text)) return { ok: false, error: 'SVG 内含活动内容，禁止上传' };
   }
   const month = new Date().toISOString().slice(0, 7).replace('-', '');
   const relDir = path.join('assets', 'uploads', month);
-  const absDir = path.join(SITE_DIR, relDir);
+  const absDir = path.join(UPLOADS_DIR, month);
   ensureDir(absDir);
   const filename = Date.now() + '-' + randomHex(4) + ext;
   fs.writeFileSync(path.join(absDir, filename), buffer);
@@ -354,7 +361,9 @@ function handleUpload(body) {
 async function handleAPI(req, res, urlObj) {
   const pathname = urlObj.pathname;
   const method = req.method || 'GET';
-  const ip = req.socket.remoteAddress || 'unknown';
+  const forwardedIP = req.headers['x-real-ip'];
+  const ip = process.env.TRUST_PROXY === 'true' && typeof forwardedIP === 'string' && net.isIP(forwardedIP)
+    ? forwardedIP : (req.socket.remoteAddress || 'unknown');
 
   // 健康检查（无需认证）
   if (pathname === '/api/health') {
@@ -516,11 +525,20 @@ const MIME = {
  * @param {string} pathname - 解码后的请求路径
  */
 function serveStatic(res, pathname) {
-  let rel = decodeURIComponent(pathname);
+  let rel = decodeURIComponent(pathname).replace(/\\/g, '/');
   if (rel.endsWith('/')) rel += 'index.html';
-  const abs = path.normalize(path.join(SITE_DIR, rel));
-  // 防止路径穿越：必须位于站点目录内
-  if (!abs.startsWith(SITE_DIR + path.sep) && abs !== SITE_DIR) {
+  let root = SITE_DIR;
+  let fileRel = rel;
+  if (rel === '/data' || rel.startsWith('/data/')) {
+    root = CONTENT_DIR;
+    fileRel = rel.slice('/data'.length);
+  } else if (rel === '/assets/uploads' || rel.startsWith('/assets/uploads/')) {
+    root = UPLOADS_DIR;
+    fileRel = rel.slice('/assets/uploads'.length);
+  }
+  const abs = path.normalize(path.join(root, fileRel));
+  // 路径必须位于所选公开目录内，账号和备份目录不允许被访问。
+  if (!abs.startsWith(root + path.sep) && abs !== root) {
     res.writeHead(403);
     return res.end('Forbidden');
   }
@@ -542,7 +560,8 @@ function serveStatic(res, pathname) {
   res.writeHead(200, {
     'Content-Type': mime,
     'Cache-Control': noCache ? 'no-store' : 'public, max-age=3600',
-    'X-Content-Type-Options': 'nosniff'
+    'X-Content-Type-Options': 'nosniff',
+    ...(root === UPLOADS_DIR ? { 'Content-Security-Policy': "sandbox; default-src 'none'; style-src 'unsafe-inline'" } : {})
   });
   fs.createReadStream(target).pipe(res);
 }
@@ -569,8 +588,10 @@ server.listen(PORT, () => {
   console.log('=====================================');
   console.log(' 弘易芯官网后台管理服务已启动');
   console.log(' 站点目录: ' + SITE_DIR);
-  console.log(' 前台地址: http://localhost:' + PORT + '/');
-  console.log(' 后台地址: http://localhost:' + PORT + '/admin/');
+  console.log(' 运营数据: ' + storage.dataDir);
+  const listenPort = server.address().port;
+  console.log(' 前台地址: http://localhost:' + listenPort + '/');
+  console.log(' 后台地址: http://localhost:' + listenPort + '/admin/');
   console.log(' 管理员 : ' + currentUser.username + '（初始密码见环境变量 ADMIN_PASSWORD，默认 hyx@2026，请登录后尽快修改）');
   console.log('=====================================');
 });
