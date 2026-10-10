@@ -1,53 +1,39 @@
-# 官网基础 CI：校验数据 JSON 合法性与服务端/后台脚本语法
 name: CI
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
+permissions:
+  contents: read
 jobs:
   validate:
-    name: 校验 JSON 数据与 JS 语法
+    name: 数据、代码与持久化测试
     runs-on: ubuntu-latest
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
-
-      - name: 使用 Node.js 20
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-
-      - name: 校验所有数据 JSON 文件
+          node-version: 24
+      - name: 校验 JSON、JavaScript 和 Bash
         run: |
-          fail=0
-          for f in $(find site/data -name '*.json'); do
-            if ! node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" 2>/dev/null; then
-              echo "::error file=$f::JSON 解析失败"
-              fail=1
-            else
-              echo "OK  $f"
-            fi
-          done
-          exit $fail
-
-      - name: 校验服务端与前端脚本语法
-        run: |
-          node --check server/server.js
-          node --check site/js/data-loader.js
-          node --check site/js/components.js
-          node --check site/admin/js/admin.js
-
-      - name: 冒烟测试：后台服务可启动
-        run: |
-          node server/server.js &
-          SERVER_PID=$!
-          sleep 2
-          curl -fsS http://localhost:3000/api/health | grep -q '"ok":true' \
-            || { echo "::error::健康检查失败"; kill $SERVER_PID; exit 1; }
-          curl -fsS http://localhost:3000/admin/ | grep -q '内容管理后台' \
-            || { echo "::error::后台页面加载失败"; kill $SERVER_PID; exit 1; }
-          kill $SERVER_PID
-          echo "冒烟测试通过"
+          node -e "const fs=require('fs'),path=require('path');function scan(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())scan(p);else if(p.endsWith('.json'))JSON.parse(fs.readFileSync(p,'utf8'));}}scan('site/data');"
+          for file in server/*.js site/js/*.js site/admin/js/*.js; do node --check "$file"; done
+          for file in *.sh test/*.sh; do bash -n "$file"; done
+          docker compose config --quiet
+          docker compose -f docker-compose-https.yml config --quiet
+      - name: 验证页面、迁移、认证、备份、恢复和三语言表单
+        run: node --test test/persistence.test.js test/site.test.js
+  deployment:
+    name: Docker ${{ matrix.mode }} 部署与恢复
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [http, https]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: bash test/docker-deployment.sh ${{ matrix.mode }}

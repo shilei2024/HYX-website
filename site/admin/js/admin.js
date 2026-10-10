@@ -2,7 +2,7 @@
  * 弘易芯科技官网 - 后台管理 SPA
  * 前后端约定：
  *  - API 前缀 /api/*，认证方式 Bearer Token（localStorage 存储）
- *  - 内容集合（site/data/*.json）整体读取、整体保存
+ *  - 内容集合整体读取、整体保存，服务端使用仓库外持久化目录
  *  - 图片上传 POST /api/upload {filename, contentBase64} → {url}
  *
  * 本文件包含：API 封装、通用 CRUD 引擎（schema 驱动）、
@@ -701,9 +701,9 @@
       '<h6 class="fw-bold mb-2">使用说明</h6>' +
       '<ul class="mb-0 small text-muted">' +
       '<li>左侧菜单管理各栏目内容，保存后<b>前台立即生效</b>（无需重启或发布）。</li>' +
-      '<li>图片类字段可直接上传新图（自动保存到站点 assets/uploads/ 目录），也可填写已有路径或外链。</li>' +
+      '<li>图片类字段可直接上传新图，也可填写已有路径或外链。</li>' +
       '<li>多语言文案（导航、按钮、栏目标题等界面文字）在「多语言文案」中维护。</li>' +
-      '<li>每次保存都会自动备份上一版本（服务器 server/data/backups/），误删可找管理员恢复。</li>' +
+      '<li>每次保存都会自动备份上一版本，误删可找管理员恢复。</li>' +
       '</ul></div></div>';
   }
 

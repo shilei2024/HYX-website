@@ -1,0 +1,4 @@
+# Linux 部署脚本及配置保持 LF，Windows 检出后也能直接运行。
+*.sh text eol=lf
+*.yml text eol=lf
+*.js text eol=lf

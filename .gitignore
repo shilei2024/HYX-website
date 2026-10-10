@@ -37,3 +37,6 @@ server/data/
 server-data/
 site/assets/uploads/
 
+# 服务器部署路径及初始账号配置
+.env
+
