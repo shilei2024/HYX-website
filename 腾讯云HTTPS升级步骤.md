@@ -1,38 +1,50 @@
-# 腾讯云现有 HTTPS 网站升级步骤
+# 腾讯云现有 HTTPS 网站人工升级
 
-现有目录：`/var/www/hyx-website`。部署路径按已确认的服务器实际目录填写。
+本指南由人工在服务器执行；本次只调整代码、配置和指导文件，没有连接服务器或执行部署。
 
-本文件是升级方案，尚未在腾讯云执行。迁移前应在旧后台把开发默认密码改成正式密码。适用于原版 Docker HTTPS 配置；如果服务器实际使用了宝塔、宿主机 nginx 或自定义 Compose，先核对挂载与服务方式再调整命令。
+## 0. 根据另一台电脑的配置确定升级方式
 
-## 0. 确认新版已合入 main
+2026-10-10 的 [服务器配置对话](https://chatgpt.com/s/cx_6acb9b8c9d848191af23d9d2ee9d34d4) 已确认：
 
-本次持久化与备份版本通过代码审核、CI 后合入 main。升级前先 git fetch，再确认 main 含 server/storage.js、server/backup.js 和新版 Compose。不要以本地运营 JSON 覆盖线上数据。
+| 项目 | 当时已验证的状态 | 本次升级处理 |
+|---|---|---|
+| 代码路径 | `/var/www/hyx-website`，全部小写 | 切换后保持此路径 |
+| 官网 | `hyx-website` 容器，80/443，nginx 1.29.5 | 保留域名与证书挂载，升级为三个服务 |
+| 原挂载 | `site`、`ssl`、`nginx-https.conf`、`logs` 均来自代码目录 | 先复制服务器当前运营内容，使用新版外部目录 |
+| 证书 | acme.sh + `dns_tencent` + Let's Encrypt，RSA 2048，覆盖两个域名 | 保留 `/root/.acme.sh`、root cron、证书安装/reload 设置 |
+| 已解决的问题 | 大写目录导致旧脚本复制失败；HTTP standalone 续期失败；localhost 健康检查误用 IPv6 | 不再使用旧 Certbot 停站脚本，保留 `127.0.0.1/healthz` |
+| 网络 | GitHub clone 曾超时 | 优先上传本机生成的离线 Git bundle |
+| 尚未确认 | 服务器源代码提交、后台/账号是否存在、当前运营数据 | 必须先检查；不能把另一台电脑的同步状态当作服务器状态 |
 
-## 1. 在服务器核对当前版本与改动（只读）
+升级后运营目录为 `/var/lib/hyx-website`，每日备份为 `/var/backups/hyx-website`（北京时间 03:00，保留 30 天）。证书账户和 root cron 属于宿主机配置，运营数据归档不包含它们，因此另外备份。
 
-登录腾讯云后：
+## 1. 上传审核后的离线代码
 
-```bash
-cd /var/www/hyx-website
-git fetch origin
-git branch --show-current
-git log -1 --oneline
-git status --short
-git log --left-right --oneline HEAD...origin/main
-git diff --name-status origin/main
-git diff -- nginx-https.conf docker-compose-https.yml
-docker compose -f docker-compose-https.yml ps
-docker inspect hyx-admin --format '{{range .Mounts}}{{println .Source "->" .Destination}}{{end}}'
-grep -nE 'server_name|ssl_certificate' nginx-https.conf
+本机交付目录包含以下三个文件：
+
+- `hyx-website-upgrade.bundle`：远端 main 已合入的完整 Git 历史和代码。
+- `hyx-website-upgrade.bundle.sha256`：校验文件。
+- `hyx-website-upgrade.version`：期望的完整提交号。
+
+在本机 PowerShell 中上传（账号、端口和密钥参数按你实际的 SSH 登录方式调整）：
+
+```powershell
+$upgradeArtifacts = 'D:\cursor-project\hyx-website-deployment'
+scp "$upgradeArtifacts\hyx-website-upgrade.bundle" "$upgradeArtifacts\hyx-website-upgrade.bundle.sha256" "$upgradeArtifacts\hyx-website-upgrade.version" ubuntu@49.235.174.111:/tmp/
 ```
 
-JSON 的本地修改可能是线上运营内容，不要 restore/reset 还原。确认后台实际挂载的内容目录、上传图片目录和账号目录，域名/证书参数是否经过线上定制。如果不是项目默认挂载，下文复制源也要改成检查到的实际目录。
+升级包只包含已提交代码，不包含本机未提交的品牌 JSON、上传图片、账号、`.env` 或证书。线上运营数据以服务器实际文件为准。
 
-## 2. 在临时目录准备新代码，保留线上配置
+## 2. 服务器只读核对
 
-建议先在新目录准备，避免服务器工作区修改与 git pull 冲突。以下步骤在同一个 SSH 会话执行，sudo 需要当前账号的正常权限：
+通过你现有的 SSH 方式登录。以下命令都在同一个 root Bash 会话执行，避免 ubuntu 用户的 Docker 权限问题：
 
 ```bash
+sudo -i
+bash
+set -euo pipefail
+# 代码和公开内容需要 nginx 工作进程可读；私密目录/文件另行设置 700/600。
+umask 022
 APP_DIR=/var/www/hyx-website
 NEXT_DIR=/var/www/hyx-website-next
 DATA_DIR=/var/lib/hyx-website
@@ -40,25 +52,94 @@ BACKUP_DIR=/var/backups/hyx-website
 UPGRADE_BACKUP_DIR=/var/backups/hyx-website-upgrade
 UPGRADE_STAMP=$(date +%Y%m%d-%H%M%S)
 PREVIOUS_DIR="${APP_DIR}.previous-${UPGRADE_STAMP}"
-
-sudo git clone --branch main https://github.com/shilei2024/HYX-website.git "$NEXT_DIR"
-sudo git -C "$NEXT_DIR" ls-files --error-unmatch server/storage.js server/backup.js
+cd "$APP_DIR"
+pwd
+docker version
+docker compose version
+docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+docker inspect hyx-website --format '{{range .Mounts}}{{println .Source "->" .Destination}}{{end}}'
+docker inspect hyx-website --format '{{index .Config.Labels "com.docker.compose.project"}}'
+docker exec hyx-website nginx -v
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  git log -1 --oneline
+  git status --short
+  git remote -v
+fi
+if docker inspect hyx-admin >/dev/null 2>&1; then
+  docker inspect hyx-admin --format '{{range .Mounts}}{{println .Source "->" .Destination}}{{end}}'
+fi
+pgrep -af '[n]ode.*server|[d]ocker compose watch' || true
+grep -nE 'server_name|ssl_certificate' nginx-https.conf
+openssl x509 -in ssl/fullchain.pem -noout -dates -issuer -ext subjectAltName
+crontab -l
+systemctl is-enabled certbot.timer || true
+systemctl is-active certbot.timer || true
+test -x /root/.acme.sh/acme.sh
+find "$APP_DIR/server-data" "$APP_DIR/server/data" -maxdepth 1 -name users.json -print 2>/dev/null || true
+if [ -e "$DATA_DIR" ]; then ls -ld "$DATA_DIR" "$DATA_DIR"/*; fi
+df -h /var/www /var/lib /var/backups
 ```
 
-clone 目录已经存在时不要覆盖，先检查其用途。第二条检查失败说明新版尚未发布，先停止升级，此时旧站没有改变。
+此处有三个检查点：
 
-将证书复制到候选目录，保留原证书；创建候选配置：
+1. 官网挂载应与第 0 节一致，域名仍为 `hyic-tech.com` 和 `www.hyic-tech.com`。若后台、内容或上传目录另有挂载，下面复制源要改成这些实际路径。
+2. 如果已经存在已使用的外部数据目录或 `.initialized.json`，不要执行第 5 节首次迁移；先备份并沿用实际 `HYX_DATA_DIR`，按 [生产维护指南](生产环境部署与维护指南.md) 的代码更新流程操作。
+3. 本流程按原 Compose 项目名 `hyx-website` 执行。若检查到其他项目名，应将下文 `-p hyx-website` 全部改为原项目名，保持容器归属一致；若容器并非由 Compose 管理，先调整切换和回退步骤再执行。
+
+**任何检查或命令失败都先停止处理，不要继续后面的切换。** `set -euo pipefail` 会让本次 Bash 在未处理错误时退出。重新进入 Bash 后须恢复变量和检查状态。
+
+## 3. 核对升级包及远端代码差异，提前构建
 
 ```bash
-sudo cp -a "$APP_DIR/ssl" "$NEXT_DIR/ssl"
-sudo cp "$NEXT_DIR/.env.example" "$NEXT_DIR/.env"
-sudo chmod 600 "$NEXT_DIR/.env"
-sudo diff -u "$APP_DIR/nginx-https.conf" "$NEXT_DIR/nginx-https.conf"
+cd /tmp
+sha256sum -c hyx-website-upgrade.bundle.sha256
+EXPECTED_COMMIT=$(cat /tmp/hyx-website-upgrade.version)
+[[ "$EXPECTED_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+test ! -e "$NEXT_DIR"
+test ! -e "$PREVIOUS_DIR"
+BUNDLE_VERIFY_DIR=$(mktemp -d /tmp/hyx-bundle-verify.XXXXXX)
+git -C "$BUNDLE_VERIFY_DIR" init --quiet
+git -C "$BUNDLE_VERIFY_DIR" bundle verify /tmp/hyx-website-upgrade.bundle
+git clone --branch main /tmp/hyx-website-upgrade.bundle "$NEXT_DIR"
+test "$(git -C "$NEXT_DIR" rev-parse HEAD)" = "$EXPECTED_COMMIT"
+git -C "$NEXT_DIR" remote set-url origin https://github.com/shilei2024/HYX-website.git
+git -C "$NEXT_DIR" ls-files --error-unmatch server/storage.js server/backup.js
 ```
 
-diff 有差异时通常返回 1，正常查看即可。编辑候选的 nginx-https.conf，保留线上实际 server_name、ssl_certificate、ssl_certificate_key 及其他必要定制，同时保留新版 /data/ 与 /assets/uploads/ 的 alias。**不要直接用旧配置覆盖新版，也不要用默认域名覆盖现网域名。**
+校验使用临时空 Git 仓库，即使原站通过压缩包部署、没有 Git 元数据也适用。离线包无需服务器连接 GitHub；以后网络恢复时 origin 仍是正式远端仓库。[Git bundle 官方说明](https://git-scm.com/docs/git-bundle)
 
-候选 .env 指定：
+若旧目录有 Git 元数据，可在本地完成与发布版本的对比，无需 `git fetch`：
+
+```bash
+if git -C "$APP_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  git -C "$APP_DIR" fetch "$NEXT_DIR" main
+  git -C "$APP_DIR" log --left-right --oneline HEAD...FETCH_HEAD
+  git -C "$APP_DIR" diff --name-status HEAD FETCH_HEAD
+  git -C "$APP_DIR" status --short
+fi
+if diff -u "$APP_DIR/nginx-https.conf" "$NEXT_DIR/nginx-https.conf"; then
+  :
+else
+  test "$?" -eq 1
+fi
+```
+
+`git diff HEAD FETCH_HEAD` 展示已提交代码差异，`git status` 展示旧站未提交改动；运营 JSON 的差异不是应当还原的错误。不要 reset、restore 或用本机 JSON 覆盖服务器内容。
+
+复制现有证书及部署参数到候选目录：
+
+```bash
+cp -a "$APP_DIR/ssl" "$NEXT_DIR/ssl"
+if [ -f "$APP_DIR/.env" ]; then
+  cp -a "$APP_DIR/.env" "$NEXT_DIR/.env"
+else
+  cp "$NEXT_DIR/.env.example" "$NEXT_DIR/.env"
+fi
+chmod 600 "$NEXT_DIR/.env"
+nano "$NEXT_DIR/.env"
+```
+
+在 `.env` 中确认下面参数；已有同名项直接修改，避免重复：
 
 ```dotenv
 HYX_DATA_DIR=/var/lib/hyx-website
@@ -66,108 +147,185 @@ HYX_BACKUP_DIR=/var/backups/hyx-website
 TZ=Asia/Shanghai
 BACKUP_TIME=03:00
 BACKUP_KEEP_DAYS=30
+ADMIN_USER=admin
+ADMIN_PASSWORD=replace-with-strong-password
 ```
 
-原账号将复制到外部目录，初始密码变量不会覆盖已存在账号。保留其他实际使用的部署参数。检查 DATA_DIR、BACKUP_DIR 是否已被其他部署使用；此流程要求 DATA_DIR 是尚未使用的新目录，已有运营数据时不要继续覆盖复制。
+**必须将密码占位值改成至少 12 位的正式密码。** 对话只展示了官网容器，不能假定存在旧账号。若第 5 节迁移了有效旧账号，新环境变量不会改掉原密码；若没有旧账号，这个密码用于首次创建账号。密码只在服务器编辑，不发到聊天或提交 Git。包含 `$`、`#` 等字符时按 Compose `.env` 规则使用单引号包裹；可以选用随机字母数字密码避免解析歧义。
 
-提前检查配置并构建镜像，可缩短停机时间：
+对比 nginx 配置后，只合并必要的现网定制：域名和证书路径保持原值，保留新版 `/data/`、`/assets/uploads/`、`/api/` 和 `/healthz`。不要整份复制旧配置覆盖新版。
 
 ```bash
 cd "$NEXT_DIR"
-sudo docker compose -f docker-compose-https.yml config --quiet
-sudo docker compose -f docker-compose-https.yml build
+docker compose -p hyx-website -f docker-compose-https.yml config --quiet
+docker compose -p hyx-website -f docker-compose-https.yml pull hyx-admin hyx-backup
+docker compose -p hyx-website -f docker-compose-https.yml build --pull hyx-website
 ```
 
-## 3. 暂停后台编辑，备份并迁移线上数据
+所有镜像拉取和构建成功后再进入维护窗口；失败时旧站仍正常运行，先解决镜像下载问题。不要为了绕过下载失败改回旧 Node 版本。上面的 `config --quiet` 不打印解析后的密码。
 
-在维护窗口操作，验收完成前不要继续后台编辑。若安装过旧 hyx-watch.service，先停用它，避免迁移期间还在同步：
+## 4. 暂停编辑，备份旧站和证书账户
+
+维护期间暂停后台保存及上传。旧站如有 Watch，应先停用：
 
 ```bash
 if systemctl cat hyx-watch.service >/dev/null 2>&1; then
-  sudo systemctl disable --now hyx-watch.service
+  systemctl disable --now hyx-watch.service
 fi
-pgrep -af '[d]ocker compose watch'
+pgrep -af '[d]ocker compose watch|[n]ode.*server' || true
+if docker inspect hyx-admin >/dev/null 2>&1; then
+  docker stop hyx-admin
+fi
 ```
 
-若另有手动启动的 Watch 进程，核对上面显示的 PID 与项目后停止该进程，不要继续带着旧 Watch 切换目录。
-
-暂停旧后台，前台此时仍可读：
+没有 `hyx-admin` 是可接受的旧版状态。若上面发现另有本项目宿主机后台或手动 Watch，先按实际服务方式停止它；不要停止其他项目的 Node 进程。此时旧官网继续提供页面。
 
 ```bash
-cd "$APP_DIR"
-sudo docker compose -f docker-compose-https.yml stop hyx-admin
-```
-
-全量备份旧目录，包括代码、运营内容、上传图片、账号、证书与部署配置。备份目录在网站之外：
-
-```bash
-sudo install -d -m 700 "$UPGRADE_BACKUP_DIR"
+install -d -m 700 "$UPGRADE_BACKUP_DIR"
 SNAPSHOT="$UPGRADE_BACKUP_DIR/before-upgrade-${UPGRADE_STAMP}.tar.gz"
-sudo tar --exclude='./logs' --exclude='./watch.log' -czf "$SNAPSHOT" -C "$APP_DIR" .
-sudo chmod 600 "$SNAPSHOT"
-sudo tar -tzf "$SNAPSHOT" >/dev/null
+ACME_SNAPSHOT="$UPGRADE_BACKUP_DIR/acme-account-${UPGRADE_STAMP}.tar.gz"
+CRON_SNAPSHOT="$UPGRADE_BACKUP_DIR/root-crontab-${UPGRADE_STAMP}.txt"
+tar --exclude='./logs' --exclude='./watch.log' -czf "$SNAPSHOT" -C "$APP_DIR" .
+tar -czf "$ACME_SNAPSHOT" -C /root .acme.sh
+crontab -l > "$CRON_SNAPSHOT"
+chmod 600 "$SNAPSHOT" "$ACME_SNAPSHOT" "$CRON_SNAPSHOT"
+tar -tzf "$SNAPSHOT" >/dev/null
+tar -tzf "$ACME_SNAPSHOT" >/dev/null
 ```
 
-仅在备份和校验均成功后继续；否则恢复旧 hyx-admin，先解决备份问题。
+这两份归档含账号、私钥或 DNS 凭据，仅保存在私密备份目录，不能上传到代码仓库。若备份失败，先恢复旧后台（如有），停止升级。
 
-对未使用过的外部目录复制运营文件，原文件不删除：
+## 5. 首次迁移服务器运营文件
+
+下文只适用于第 2 节确认的旧版默认目录及尚未使用的 `DATA_DIR`。若有外部挂载，先把复制源改成真实目录；如果已有外部运营数据，沿用原数据，不执行此处复制。
 
 ```bash
-(
-set -e
-sudo test ! -e "$DATA_DIR"
-sudo install -d "$DATA_DIR/content" "$DATA_DIR/uploads" "$DATA_DIR/server-data"
-sudo cp -a "$APP_DIR/site/data/." "$DATA_DIR/content/"
-if [ -d "$APP_DIR/site/assets/uploads" ]; then
-  sudo cp -a "$APP_DIR/site/assets/uploads/." "$DATA_DIR/uploads/"
+test ! -e "$DATA_DIR"
+OLD_CONTENT_DIR="$APP_DIR/site/data"
+OLD_UPLOADS_DIR="$APP_DIR/site/assets/uploads"
+OLD_USERS_DIR=""
+for candidate in "$APP_DIR/server-data" "$APP_DIR/server/data"; do
+  if [ -f "$candidate/users.json" ]; then
+    if [ -n "$OLD_USERS_DIR" ]; then
+      cmp "$OLD_USERS_DIR/users.json" "$candidate/users.json"
+    else
+      OLD_USERS_DIR="$candidate"
+    fi
+  fi
+done
+test -d "$OLD_CONTENT_DIR"
+install -d -m 755 "$DATA_DIR" "$DATA_DIR/content" "$DATA_DIR/uploads"
+install -d -m 700 "$DATA_DIR/server-data" "$BACKUP_DIR"
+cp -a "$OLD_CONTENT_DIR/." "$DATA_DIR/content/"
+if [ -d "$OLD_UPLOADS_DIR" ]; then
+  cp -a "$OLD_UPLOADS_DIR/." "$DATA_DIR/uploads/"
 fi
-if [ -d "$APP_DIR/server-data" ]; then
-  sudo cp -a "$APP_DIR/server-data/." "$DATA_DIR/server-data/"
+if [ -n "$OLD_USERS_DIR" ]; then
+  cp -a "$OLD_USERS_DIR/." "$DATA_DIR/server-data/"
 fi
-if [ -d "$APP_DIR/server/data" ]; then
-  sudo cp -an "$APP_DIR/server/data/." "$DATA_DIR/server-data/"
+chmod 700 "$DATA_DIR/server-data"
+diff -qr "$OLD_CONTENT_DIR" "$DATA_DIR/content"
+if [ -d "$OLD_UPLOADS_DIR" ]; then
+  diff -qr "$OLD_UPLOADS_DIR" "$DATA_DIR/uploads"
 fi
-sudo chmod 700 "$DATA_DIR/server-data"
-)
+if [ -n "$OLD_USERS_DIR" ]; then
+  cmp "$OLD_USERS_DIR/users.json" "$DATA_DIR/server-data/users.json"
+fi
+cd "$NEXT_DIR"
+docker compose -p hyx-website -f docker-compose-https.yml run --rm --no-deps hyx-admin node /srv/app/server/storage.js
+test -f "$DATA_DIR/.initialized.json"
 ```
 
-这个复制步骤在子 shell 内启用遇错停止。目录检查或任何复制失败时，必须停止并核对，不能进入下一步切换。逐项确认 content/ 与原 site/data/、uploads/ 与原上传目录一致；原后台存在持久化账号时，核对外部 users.json 与旧账号文件一致。不要将本机 D 盘的运营目录拷过来覆盖线上内容。
+若两处旧账号文件同时存在且不同，`cmp` 会停止本流程；以旧后台实际挂载为准核对，不能猜测覆盖。旧后台另有历史快照路径时也要迁移至 `server-data/`。没有旧账号文件时，新版首次启动创建正式账号。
 
-## 4. 切换代码目录并启动新版 HTTPS
+`storage.js` 只补齐缺失的初始文件并验证 JSON，不覆盖已复制的服务器内容；任何迁移/校验错误均需修复后再切换。原目录和原文件仍保留。
 
-仍在同一会话，保留旧目录作回退：
+## 6. 切换代码，保留现有 DNS 续期
+
+先检查 `date`、root cron 和 acme.sh 进程，选择避开续期任务运行的维护时间。cron 的时间以服务器时区为准；对话中的任务是每天 01:20、07:20、13:20、19:20 检查。切换前刷新候选证书副本，缩短已登记安装路径暂时不可用的间隙：
 
 ```bash
+date
+crontab -l
+pgrep -af '[a]cme.sh' || true
+```
+
+如果 acme.sh 正在签发/安装，等它完成再继续，保留原定时任务。
+
+```bash
+cp -a "$APP_DIR/ssl/." "$NEXT_DIR/ssl/"
+openssl x509 -in "$NEXT_DIR/ssl/fullchain.pem" -noout -checkend 86400
+chmod 600 "$NEXT_DIR/ssl/privkey.pem"
+chmod 644 "$NEXT_DIR/ssl/fullchain.pem"
 cd "$APP_DIR"
-sudo docker compose -f docker-compose-https.yml down
+docker compose -p hyx-website -f docker-compose-https.yml down
 cd /var/www
-sudo mv "$APP_DIR" "$PREVIOUS_DIR"
-sudo mv "$NEXT_DIR" "$APP_DIR"
+mv "$APP_DIR" "$PREVIOUS_DIR"
+mv "$NEXT_DIR" "$APP_DIR"
 cd "$APP_DIR"
-sudo docker compose -f docker-compose-https.yml up -d --build --force-recreate --wait --wait-timeout 180
+docker compose -p hyx-website -f docker-compose-https.yml up -d --force-recreate --wait --wait-timeout 180
+/root/.acme.sh/acme.sh --install-cert -d hyic-tech.com \
+  --key-file /var/www/hyx-website/ssl/privkey.pem \
+  --fullchain-file /var/www/hyx-website/ssl/fullchain.pem \
+  --reloadcmd '/usr/bin/docker exec hyx-website nginx -t && /usr/bin/docker exec hyx-website nginx -s reload'
+crontab -l > "$UPGRADE_BACKUP_DIR/root-crontab-after-${UPGRADE_STAMP}.txt"
+cmp "$CRON_SNAPSHOT" "$UPGRADE_BACKUP_DIR/root-crontab-after-${UPGRADE_STAMP}.txt"
 ```
 
-有短暂网站停机。切换前确认目标目录名称不冲突。新版启动会使用已复制的外部内容/账号，并生成迁移标记；之后更新代码不会覆盖外部运营内容。
+此处有短暂停机。三个服务使用提前准备好的镜像，证书命令只安装已有 RSA 证书并登记原路径/reload，不重新签发、不读取旧 Certbot 副本。不要恢复旧 `renew-ssl.sh` 定时任务或启用 `certbot.timer`。acme.sh 仍位于仓库之外。
 
-## 5. 验证之后再放开编辑
+## 7. 验收后恢复后台编辑
 
 ```bash
-sudo docker compose -f docker-compose-https.yml ps
-sudo docker compose -f docker-compose-https.yml logs --tail 50 hyx-admin hyx-backup
-sudo docker compose -f docker-compose-https.yml exec -T hyx-website nginx -t
-sudo docker compose -f docker-compose-https.yml exec -T hyx-admin wget -qO- http://localhost:3000/api/health
-sudo docker compose -f docker-compose-https.yml exec -T hyx-backup node /srv/app/server/backup.js
-sudo cat "$BACKUP_DIR/last-success.json"
+cd "$APP_DIR"
+test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT"
+docker compose -p hyx-website -f docker-compose-https.yml ps
+docker compose -p hyx-website -f docker-compose-https.yml logs --tail 50 hyx-admin hyx-backup
+docker exec hyx-website nginx -t
+docker exec hyx-website wget -qO- http://127.0.0.1/healthz
+docker exec hyx-admin wget -qO- http://127.0.0.1:3000/api/health
+curl -fsSI https://hyic-tech.com/
+curl -fsSI https://www.hyic-tech.com/
+curl -fsS https://hyic-tech.com/api/health
+curl -fsSI https://hyic-tech.com/data/news.json
+openssl s_client -connect hyic-tech.com:443 -servername hyic-tech.com </dev/null 2>/dev/null |
+  openssl x509 -noout -dates -issuer -ext subjectAltName
+docker exec hyx-backup node /srv/app/server/backup.js
+docker exec hyx-backup node /srv/app/server/backup.js --health
+ARCHIVE=$(docker exec hyx-backup node -p 'JSON.parse(require("fs").readFileSync("/srv/backups/last-success.json","utf8")).archive')
+tar -tzf "$BACKUP_DIR/$ARCHIVE" >/dev/null
+cat "$BACKUP_DIR/last-success.json"
 ```
 
-另外使用实际域名验证 HTTPS 首页、/admin/、/api/health、/data/news.json，确认 JSON 返回 Cache-Control: no-store、旧上传图片可访问、原账号可以登录。验收期间先做只读检查。
+预期三个容器均 healthy，TLS 正常校验，SAN 包含两个域名，内容响应有 `Cache-Control: no-store`，全量备份可读。磁盘证书与公网证书有效期应一致。
 
-首份手动备份成功后，每日北京时间 03:00 的自动任务已配置，保留最近 30 天。备份打包 content、uploads、账号、旧 JSON 及迁移标记。若当天已经成功手动备份，定时服务不会再重复当天任务。
+浏览器打开 `https://hyic-tech.com/admin/`，核对原新闻、品牌和上传图片。迁移了旧账号就用原密码；没有旧账号则用服务器 `.env` 中设定的新账号。确认数据齐全后恢复编辑，可以保存一项可恢复的测试内容并上传测试图片，刷新前台检查，再在后台清理测试内容。
 
-## 6. 失败回退
+`hyx-backup` 已随 Compose 配置每日北京时间 03:00 自动备份，保留 30 天，无需额外 crontab。宿主机的 acme.sh cron 继续负责证书续期，两者分别检查。新代码更新和容器重建后，内容、图片和账号仍来自相同外部目录。
 
-如果尚未恢复后台编辑、外部数据还与迁移前一致，可停止新容器，把当前代码目录另存为失败版本，再把 PREVIOUS_DIR 恢复为 /var/www/hyx-website，用原 HTTPS Compose 启动。不要删除外部数据或升级前的归档。
+## 8. 失败回退
 
-如果新版上线后已经有内容或密码修改，回退前先将最新外部 content/、uploads/、server-data/ 复制回旧版实际使用的目录，确保新产生的内容和账号不会丢失；不应直接恢复旧快照覆盖最新运营内容。
+若尚未恢复后台编辑、外部数据仍与迁移前一致，按下面恢复原代码。变量仍来自同一 Bash 会话；若已退出，用第 4 节记录的时间戳定位实际旧目录，不能重新生成时间戳来猜路径。
 
-本次没有连接服务器，也没有执行停机、迁移或切换。实际执行前必须先确认服务器检查结果。
+```bash
+test -d "$PREVIOUS_DIR"
+FAILED_DIR="${APP_DIR}.failed-${UPGRADE_STAMP}"
+test ! -e "$FAILED_DIR"
+cd "$APP_DIR"
+docker compose -p hyx-website -f docker-compose-https.yml down
+cp -a "$APP_DIR/ssl/." "$PREVIOUS_DIR/ssl/"
+cd /var/www
+mv "$APP_DIR" "$FAILED_DIR"
+mv "$PREVIOUS_DIR" "$APP_DIR"
+cd "$APP_DIR"
+docker compose -p hyx-website -f docker-compose-https.yml up -d
+/root/.acme.sh/acme.sh --install-cert -d hyic-tech.com \
+  --key-file /var/www/hyx-website/ssl/privkey.pem \
+  --fullchain-file /var/www/hyx-website/ssl/fullchain.pem \
+  --reloadcmd '/usr/bin/docker exec hyx-website nginx -t && /usr/bin/docker exec hyx-website nginx -s reload'
+curl -fsSI https://hyic-tech.com/
+```
+
+保留失败目录、外部数据和升级归档。如果新版已经产生内容、图片或密码修改，回退前先备份最新外部数据，并将最新内容复制到旧后台实际使用的目录；不要拿升级前快照覆盖新产生的数据。
+
+验收稳定后再安排归档旧代码。后续正常更新见 [生产环境部署与维护指南.md](生产环境部署与维护指南.md)，证书检查见 [HTTPS配置指南.md](HTTPS配置指南.md)。
