@@ -164,11 +164,18 @@ ADMIN_PASSWORD=replace-with-strong-password
 ```bash
 cd "$NEXT_DIR"
 docker compose -p hyx-website -f docker-compose-https.yml config --quiet
+CONFIG_DATA_DIR=$(docker compose -p hyx-website -f docker-compose-https.yml config --environment | sed -n 's/^HYX_DATA_DIR=//p')
+CONFIG_BACKUP_DIR=$(docker compose -p hyx-website -f docker-compose-https.yml config --environment | sed -n 's/^HYX_BACKUP_DIR=//p')
+printf 'Compose 数据目录：%s\nCompose 备份目录：%s\n' "$CONFIG_DATA_DIR" "$CONFIG_BACKUP_DIR"
+test "$CONFIG_DATA_DIR" = "$DATA_DIR"
+test "$CONFIG_BACKUP_DIR" = "$BACKUP_DIR"
 docker compose -p hyx-website -f docker-compose-https.yml pull hyx-admin hyx-backup
 docker compose -p hyx-website -f docker-compose-https.yml build --pull hyx-website
 ```
 
-所有镜像拉取和构建成功后再进入维护窗口；失败时旧站仍正常运行，先解决镜像下载问题。不要为了绕过下载失败改回旧 Node 版本。上面的 `config --quiet` 不打印解析后的密码。
+配置输出的两个目录必须与迁移目标一致，否则先修正候选 `.env` 和 shell 中的同名环境变量，再继续。`DATA_DIR`/`BACKUP_DIR` 是本指南的 shell 变量，Compose 实际使用的是 `HYX_DATA_DIR`/`HYX_BACKUP_DIR`；只设置前者不会改变容器挂载。shell 中已导出的同名变量优先于 `.env`。[Docker 变量优先级](https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/)
+
+所有镜像拉取和构建成功后再进入维护窗口；失败时旧站仍正常运行，先解决镜像下载问题。不要为了绕过下载失败改回旧 Node 版本。上面的配置命令只显示数据路径，不打印解析后的密码。
 
 ## 4. 暂停编辑，备份旧站和证书账户
 
@@ -286,6 +293,18 @@ cmp "$CRON_SNAPSHOT" "$UPGRADE_BACKUP_DIR/root-crontab-after-${UPGRADE_STAMP}.tx
 cd "$APP_DIR"
 test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT"
 docker compose -p hyx-website -f docker-compose-https.yml ps
+docker inspect hyx-website hyx-admin hyx-backup --format '{{println .Name}}{{range .Mounts}}{{println .Type .Source "->" .Destination}}{{end}}'
+ACTUAL_DATA_DIR=$(docker inspect hyx-admin --format '{{range .Mounts}}{{if eq .Destination "/srv/persistent"}}{{.Source}}{{end}}{{end}}')
+ACTUAL_BACKUP_DATA_DIR=$(docker inspect hyx-backup --format '{{range .Mounts}}{{if eq .Destination "/srv/persistent"}}{{.Source}}{{end}}{{end}}')
+ACTUAL_BACKUP_DIR=$(docker inspect hyx-backup --format '{{range .Mounts}}{{if eq .Destination "/srv/backups"}}{{.Source}}{{end}}{{end}}')
+ACTUAL_CONTENT_DIR=$(docker inspect hyx-website --format '{{range .Mounts}}{{if eq .Destination "/srv/content"}}{{.Source}}{{end}}{{end}}')
+ACTUAL_UPLOADS_DIR=$(docker inspect hyx-website --format '{{range .Mounts}}{{if eq .Destination "/srv/uploads"}}{{.Source}}{{end}}{{end}}')
+printf '后台实际数据：%s\n备份实际数据：%s\n实际备份目录：%s\n' "$ACTUAL_DATA_DIR" "$ACTUAL_BACKUP_DATA_DIR" "$ACTUAL_BACKUP_DIR"
+test "$ACTUAL_DATA_DIR" = "$DATA_DIR"
+test "$ACTUAL_BACKUP_DATA_DIR" = "$DATA_DIR"
+test "$ACTUAL_BACKUP_DIR" = "$BACKUP_DIR"
+test "$ACTUAL_CONTENT_DIR" = "$DATA_DIR/content"
+test "$ACTUAL_UPLOADS_DIR" = "$DATA_DIR/uploads"
 docker compose -p hyx-website -f docker-compose-https.yml logs --tail 50 hyx-admin hyx-backup
 docker exec hyx-website nginx -t
 docker exec hyx-website wget -qO- http://127.0.0.1/healthz
@@ -299,11 +318,13 @@ openssl s_client -connect hyic-tech.com:443 -servername hyic-tech.com </dev/null
 docker exec hyx-backup node /srv/app/server/backup.js
 docker exec hyx-backup node /srv/app/server/backup.js --health
 ARCHIVE=$(docker exec hyx-backup node -p 'JSON.parse(require("fs").readFileSync("/srv/backups/last-success.json","utf8")).archive')
-tar -tzf "$BACKUP_DIR/$ARCHIVE" >/dev/null
-cat "$BACKUP_DIR/last-success.json"
+tar -tzf "$ACTUAL_BACKUP_DIR/$ARCHIVE" >/dev/null
+cat "$ACTUAL_BACKUP_DIR/last-success.json"
 ```
 
 预期三个容器均 healthy，TLS 正常校验，SAN 包含两个域名，内容响应有 `Cache-Control: no-store`，全量备份可读。磁盘证书与公网证书有效期应一致。
+
+挂载检查不一致时，先按第 10 节核对，不能直接把 shell 的 `BACKUP_DIR` 改成实际值后跳过数据验收：后台可能同样读取了另一份初始内容。只有确认实际数据就是迁移目标，才能继续验收。
 
 浏览器打开 `https://hyic-tech.com/admin/`，核对原新闻、品牌和上传图片。迁移了旧账号就用原密码；没有旧账号则用服务器 `.env` 中设定的新账号。确认数据齐全后恢复编辑，可以保存一项可恢复的测试内容并上传测试图片，刷新前台检查，再在后台清理测试内容。
 
@@ -368,3 +389,37 @@ curl -fsSI https://hyic-tech.com/
 ```
 
 上述检查拒绝未处理的工作区改动和不一致的发布版本。证书、`.env` 和外部运营数据继续沿用；后续涉及部署参数、nginx 定制或更复杂变更时，先备份配置并使用第 3～8 节的候选目录切换流程。`git pull --ff-only` 无法快进时先核对分支差异，不强制重置服务器代码。[Git pull 官方说明](https://git-scm.com/docs/git-pull)
+
+## 10. 容器内有备份、宿主机预期目录却找不到
+
+这通常表示 shell 中 `BACKUP_DIR` 与实际挂载路径不同。默认 Compose 路径是 `../hyx-website-data` 和 `../hyx-website-backups`；部署在 `/var/www/hyx-website` 时，它们对应 `/var/www/hyx-website-data` 和 `/var/www/hyx-website-backups`。先按实际容器挂载定位，不创建空目录来掩盖错误。
+
+以下是只读检查。**一次只复制一个命令块**，不要把多条命令拼到同一行：
+
+```bash
+docker inspect hyx-backup hyx-admin --format '{{println .Name}}{{range .Mounts}}{{println .Type .Source "->" .Destination}}{{end}}'
+```
+
+```bash
+grep -nE '^[[:space:]]*(HYX_DATA_DIR|HYX_BACKUP_DIR|BACKUP_TIME|BACKUP_KEEP_DAYS)=' /var/www/hyx-website/.env
+```
+
+```bash
+docker exec hyx-backup cat /srv/backups/last-success.json
+```
+
+```bash
+docker exec hyx-backup node /srv/app/server/backup.js --health
+```
+
+若后台数据路径也不一致，先暂停编辑，对比两份数据：
+
+```bash
+diff -qr /var/lib/hyx-website /var/www/hyx-website-data || true
+```
+
+这只报告差异文件，不显示账号内容。运行目录中的新闻/品牌与迁移目标不同时，先确认升级后是否有保存、上传或改密；已经产生新修改时必须先备份并逐项保留，不能直接覆盖。
+
+如果迁移目标已经存在、升级后尚未进行后台操作：保留迁移目标里的原运营 JSON，将当前目录中缺失的账号/图片补到迁移目标，保留两处原始目录和归档。修改服务器 `.env` 的两个 HYX 路径为预期绝对路径，保持原账号密码配置；清除 shell 同名路径变量的覆盖或为 Compose 命令显式指定它们，再运行 storage.js 补齐缺失的初始文件并验证数据。重建三个服务后重新检查实际挂载，并手动备份新的正确数据目录。
+
+操作前停止后台和备份，制作权限受限的归档，包含两份数据、已有备份和 `.env`。补齐账号/图片时使用不覆盖已有文件的复制；两处已有账号不同则先核对，不猜测替换。调整挂载不需要修改 acme.sh、root 证书 cron 或重新签发证书。
