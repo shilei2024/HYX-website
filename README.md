@@ -10,7 +10,7 @@
 | **[日常更新.md](日常更新.md)** | 日常更新与维护 |
 | **[故障排查.md](故障排查.md)** | 常见问题排查 |
 | **[HTTPS配置指南.md](HTTPS配置指南.md)** | 443/SSL 证书与 Nginx 配置 |
-| **[腾讯云HTTPS升级步骤.md](腾讯云HTTPS升级步骤.md)** | 现有腾讯云网站人工升级，保留 acme.sh DNS 续期，支持离线 Git 包 |
+| **[腾讯云HTTPS升级步骤.md](腾讯云HTTPS升级步骤.md)** | 本机发布到 GitHub，腾讯云从 GitHub 更新，保留 acme.sh DNS 续期 |
 | `一键部署.sh` | 一键部署（可选启用 HTTPS） |
 | `server/storage.js` | 首次启动迁移运营数据、图片与账号 |
 | `server/backup.js` | 全量备份及每日定时任务 |
@@ -19,7 +19,7 @@
 
 ## 🎯 快速开始
 
-已部署在腾讯云 `/var/www/hyx-website` 的网站，请先按 [腾讯云HTTPS升级步骤.md](腾讯云HTTPS升级步骤.md) 备份和迁移。现网使用 `/root/.acme.sh` 的腾讯云 DNS 验证续期；保留该目录、root 定时任务及 `ssl/` 安装路径。
+已部署在腾讯云 `/var/www/hyx-website` 的网站，先在本机提交、推送并合入 GitHub 的 `main`，确认 CI 通过，再按 [腾讯云HTTPS升级步骤.md](腾讯云HTTPS升级步骤.md) 从 GitHub 获取代码、对比、备份和迁移。现网使用 `/root/.acme.sh` 的腾讯云 DNS 验证续期；保留该目录、root 定时任务及 `ssl/` 安装路径。
 
 ```bash
 cd /path/to/HYX-website

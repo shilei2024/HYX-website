@@ -2,6 +2,8 @@
 
 本指南由人工在服务器执行；本次只调整代码、配置和指导文件，没有连接服务器或执行部署。
 
+发布顺序：**本机修改并提交 → 推送 GitHub → 审核、CI 通过后合入 main → 服务器从 GitHub 获取已发布代码 → 对比、备份、迁移并部署。** 首次迁移使用候选目录；完成数据分离后的日常更新使用原代码目录的 `git pull --ff-only origin main`。
+
 ## 0. 根据另一台电脑的配置确定升级方式
 
 2026-10-10 的 [服务器配置对话](https://chatgpt.com/s/cx_6acb9b8c9d848191af23d9d2ee9d34d4) 已确认：
@@ -13,27 +15,30 @@
 | 原挂载 | `site`、`ssl`、`nginx-https.conf`、`logs` 均来自代码目录 | 先复制服务器当前运营内容，使用新版外部目录 |
 | 证书 | acme.sh + `dns_tencent` + Let's Encrypt，RSA 2048，覆盖两个域名 | 保留 `/root/.acme.sh`、root cron、证书安装/reload 设置 |
 | 已解决的问题 | 大写目录导致旧脚本复制失败；HTTP standalone 续期失败；localhost 健康检查误用 IPv6 | 不再使用旧 Certbot 停站脚本，保留 `127.0.0.1/healthz` |
-| 网络 | GitHub clone 曾超时 | 优先上传本机生成的离线 Git bundle |
+| 网络 | GitHub clone 曾超时 | 先确认服务器能访问 GitHub；clone/fetch 成功后再进入维护窗口 |
 | 尚未确认 | 服务器源代码提交、后台/账号是否存在、当前运营数据 | 必须先检查；不能把另一台电脑的同步状态当作服务器状态 |
 
 升级后运营目录为 `/var/lib/hyx-website`，每日备份为 `/var/backups/hyx-website`（北京时间 03:00，保留 30 天）。证书账户和 root cron 属于宿主机配置，运营数据归档不包含它们，因此另外备份。
 
-## 1. 上传审核后的离线代码
+## 1. 先在本机将代码发布到 GitHub
 
-本机交付目录包含以下三个文件：
-
-- `hyx-website-upgrade.bundle`：远端 main 已合入的完整 Git 历史和代码。
-- `hyx-website-upgrade.bundle.sha256`：校验文件。
-- `hyx-website-upgrade.version`：期望的完整提交号。
-
-在本机 PowerShell 中上传（账号、端口和密钥参数按你实际的 SSH 登录方式调整）：
+本机在 `D:\cursor-project\hyx-website` 修改、审核并提交需要发布的代码。下面以部署文档修改为例，功能更新时将 `git add` 的列表改为实际代码文件；发布分支名称使用尚未存在的新名称。每条命令成功后再继续，失败时先处理错误。
 
 ```powershell
-$upgradeArtifacts = 'D:\cursor-project\hyx-website-deployment'
-scp "$upgradeArtifacts\hyx-website-upgrade.bundle" "$upgradeArtifacts\hyx-website-upgrade.bundle.sha256" "$upgradeArtifacts\hyx-website-upgrade.version" ubuntu@49.235.174.111:/tmp/
+cd D:\cursor-project\hyx-website
+git status --short
+git diff
+git switch -c codex/release-update
+git add -- README.md "腾讯云HTTPS升级步骤.md" "部署指南.md" "生产环境部署与维护指南.md" "日常更新.md"
+git diff --cached --stat
+git diff --cached --check
+git commit -m "docs: update server deployment workflow"
+git push -u origin codex/release-update
 ```
 
-升级包只包含已提交代码，不包含本机未提交的品牌 JSON、上传图片、账号、`.env` 或证书。线上运营数据以服务器实际文件为准。
+在 [GitHub 仓库](https://github.com/shilei2024/HYX-website) 为发布分支创建 PR，审核并等待 CI 通过后合入 `main`。确认合并后 `main` 的 CI 也通过，记录其 **40 位提交号**，供第 3 节校验部署版本。服务器只部署已合入 `main` 的版本。
+
+本机已有未提交的品牌 JSON 属于本机运营内容，不纳入本次代码发布。上传图片、账号、`.env`、证书和 DNS 凭据也不提交；服务器运营数据以线上实际文件为准。
 
 ## 2. 服务器只读核对
 
@@ -88,31 +93,32 @@ df -h /var/www /var/lib /var/backups
 
 **任何检查或命令失败都先停止处理，不要继续后面的切换。** `set -euo pipefail` 会让本次 Bash 在未处理错误时退出。重新进入 Bash 后须恢复变量和检查状态。
 
-## 3. 核对升级包及远端代码差异，提前构建
+## 3. 服务器从 GitHub 获取代码、对比并提前构建
+
+先将第 1 节记录的 GitHub `main` 提交号粘贴到提示中，再克隆候选代码目录。旧官网此时继续运行：
 
 ```bash
-cd /tmp
-sha256sum -c hyx-website-upgrade.bundle.sha256
-EXPECTED_COMMIT=$(cat /tmp/hyx-website-upgrade.version)
+read -r -p '请输入 GitHub main 已通过 CI 的 40 位提交号: ' EXPECTED_COMMIT
 [[ "$EXPECTED_COMMIT" =~ ^[0-9a-f]{40}$ ]]
 test ! -e "$NEXT_DIR"
 test ! -e "$PREVIOUS_DIR"
-BUNDLE_VERIFY_DIR=$(mktemp -d /tmp/hyx-bundle-verify.XXXXXX)
-git -C "$BUNDLE_VERIFY_DIR" init --quiet
-git -C "$BUNDLE_VERIFY_DIR" bundle verify /tmp/hyx-website-upgrade.bundle
-git clone --branch main /tmp/hyx-website-upgrade.bundle "$NEXT_DIR"
+git clone --branch main --single-branch https://github.com/shilei2024/HYX-website.git "$NEXT_DIR"
+git -C "$NEXT_DIR" fetch origin main
+test "$(git -C "$NEXT_DIR" rev-parse origin/main)" = "$EXPECTED_COMMIT"
 test "$(git -C "$NEXT_DIR" rev-parse HEAD)" = "$EXPECTED_COMMIT"
-git -C "$NEXT_DIR" remote set-url origin https://github.com/shilei2024/HYX-website.git
+git -C "$NEXT_DIR" remote -v
+git -C "$NEXT_DIR" log -1 --oneline
 git -C "$NEXT_DIR" ls-files --error-unmatch server/storage.js server/backup.js
 ```
 
-校验使用临时空 Git 仓库，即使原站通过压缩包部署、没有 Git 元数据也适用。离线包无需服务器连接 GitHub；以后网络恢复时 origin 仍是正式远端仓库。[Git bundle 官方说明](https://git-scm.com/docs/git-bundle)
+若 GitHub 连接超时，先解决服务器到 GitHub 的网络连通性，成功获取代码前不暂停旧站。若提交号检查失败，说明远端版本与预期不同，先在 GitHub 核对 `main` 和 CI 状态；不跳过版本校验继续部署。clone 失败后可能留下候选目录，重试前检查并另选未使用的候选目录。[Git clone 官方说明](https://git-scm.com/docs/git-clone)
 
-若旧目录有 Git 元数据，可在本地完成与发布版本的对比，无需 `git fetch`：
+若旧目录有 Git 元数据，从 GitHub 获取 `main` 并比较原提交与本次发布版本：
 
 ```bash
 if git -C "$APP_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  git -C "$APP_DIR" fetch "$NEXT_DIR" main
+  git -C "$APP_DIR" fetch https://github.com/shilei2024/HYX-website.git main
+  test "$(git -C "$APP_DIR" rev-parse FETCH_HEAD)" = "$EXPECTED_COMMIT"
   git -C "$APP_DIR" log --left-right --oneline HEAD...FETCH_HEAD
   git -C "$APP_DIR" diff --name-status HEAD FETCH_HEAD
   git -C "$APP_DIR" status --short
@@ -124,7 +130,7 @@ else
 fi
 ```
 
-`git diff HEAD FETCH_HEAD` 展示已提交代码差异，`git status` 展示旧站未提交改动；运营 JSON 的差异不是应当还原的错误。不要 reset、restore 或用本机 JSON 覆盖服务器内容。
+`git diff HEAD FETCH_HEAD` 展示已提交代码差异，`git status` 展示旧站未提交改动；运营 JSON 的差异不是应当还原的错误。不要 reset、restore 或用本机 JSON 覆盖服务器内容。旧目录没有 Git 元数据时，仍可使用 GitHub 克隆的候选目录部署，并保留原目录用于数据迁移和回退。
 
 复制现有证书及部署参数到候选目录：
 
@@ -329,3 +335,36 @@ curl -fsSI https://hyic-tech.com/
 保留失败目录、外部数据和升级归档。如果新版已经产生内容、图片或密码修改，回退前先备份最新外部数据，并将最新内容复制到旧后台实际使用的目录；不要拿升级前快照覆盖新产生的数据。
 
 验收稳定后再安排归档旧代码。后续正常更新见 [生产环境部署与维护指南.md](生产环境部署与维护指南.md)，证书检查见 [HTTPS配置指南.md](HTTPS配置指南.md)。
+
+## 9. 完成首次迁移后的日常 GitHub 更新
+
+每次先在本机按第 1 节提交、推送并合入 GitHub `main`，确认 CI 通过。服务器已经使用外部运营目录、工作区没有需要保留的代码改动时，在 root Bash 中执行：
+
+```bash
+set -euo pipefail
+cd /var/www/hyx-website
+test "$(git branch --show-current)" = main
+test "$(git remote get-url origin)" = https://github.com/shilei2024/HYX-website.git
+test -z "$(git status --porcelain)"
+read -r -p '请输入本次 GitHub main 已通过 CI 的 40 位提交号: ' EXPECTED_COMMIT
+[[ "$EXPECTED_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+git fetch origin main
+test "$(git rev-parse origin/main)" = "$EXPECTED_COMMIT"
+git log --left-right --oneline HEAD...origin/main
+git diff --stat HEAD origin/main
+```
+
+查看差异并确认本次发布版本后，先做运营全量备份，再从 GitHub 更新代码并重建服务：
+
+```bash
+docker compose -p hyx-website -f docker-compose-https.yml exec -T hyx-backup node /srv/app/server/backup.js
+git pull --ff-only origin main
+test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT"
+docker compose -p hyx-website -f docker-compose-https.yml config --quiet
+docker compose -p hyx-website -f docker-compose-https.yml up -d --build --force-recreate --wait --wait-timeout 180
+docker compose -p hyx-website -f docker-compose-https.yml ps
+curl -fsS https://hyic-tech.com/api/health
+curl -fsSI https://hyic-tech.com/
+```
+
+上述检查拒绝未处理的工作区改动和不一致的发布版本。证书、`.env` 和外部运营数据继续沿用；后续涉及部署参数、nginx 定制或更复杂变更时，先备份配置并使用第 3～8 节的候选目录切换流程。`git pull --ff-only` 无法快进时先核对分支差异，不强制重置服务器代码。[Git pull 官方说明](https://git-scm.com/docs/git-pull)
