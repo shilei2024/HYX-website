@@ -1,6 +1,6 @@
 # 腾讯云现有 HTTPS 网站升级步骤
 
-现有目录：`/var/www/hyx-websit`。路径按用户提供的拼写保留，没有末尾 e。
+现有目录：`/var/www/hyx-website`。部署路径按已确认的服务器实际目录填写。
 
 本文件是升级方案，尚未在腾讯云执行。迁移前应在旧后台把开发默认密码改成正式密码。适用于原版 Docker HTTPS 配置；如果服务器实际使用了宝塔、宿主机 nginx 或自定义 Compose，先核对挂载与服务方式再调整命令。
 
@@ -13,7 +13,7 @@
 登录腾讯云后：
 
 ```bash
-cd /var/www/hyx-websit
+cd /var/www/hyx-website
 git fetch origin
 git branch --show-current
 git log -1 --oneline
@@ -33,8 +33,8 @@ JSON 的本地修改可能是线上运营内容，不要 restore/reset 还原。
 建议先在新目录准备，避免服务器工作区修改与 git pull 冲突。以下步骤在同一个 SSH 会话执行，sudo 需要当前账号的正常权限：
 
 ```bash
-APP_DIR=/var/www/hyx-websit
-NEXT_DIR=/var/www/hyx-websit-next
+APP_DIR=/var/www/hyx-website
+NEXT_DIR=/var/www/hyx-website-next
 DATA_DIR=/var/lib/hyx-website
 BACKUP_DIR=/var/backups/hyx-website
 UPGRADE_BACKUP_DIR=/var/backups/hyx-website-upgrade
@@ -166,7 +166,7 @@ sudo cat "$BACKUP_DIR/last-success.json"
 
 ## 6. 失败回退
 
-如果尚未恢复后台编辑、外部数据还与迁移前一致，可停止新容器，把当前代码目录另存为失败版本，再把 PREVIOUS_DIR 恢复为 /var/www/hyx-websit，用原 HTTPS Compose 启动。不要删除外部数据或升级前的归档。
+如果尚未恢复后台编辑、外部数据还与迁移前一致，可停止新容器，把当前代码目录另存为失败版本，再把 PREVIOUS_DIR 恢复为 /var/www/hyx-website，用原 HTTPS Compose 启动。不要删除外部数据或升级前的归档。
 
 如果新版上线后已经有内容或密码修改，回退前先将最新外部 content/、uploads/、server-data/ 复制回旧版实际使用的目录，确保新产生的内容和账号不会丢失；不应直接恢复旧快照覆盖最新运营内容。
 
